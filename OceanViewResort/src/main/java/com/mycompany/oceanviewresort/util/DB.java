@@ -4,22 +4,21 @@
  */
 package com.mycompany.oceanviewresort.util;
 
+/**
+ *
+ * @author User
+ */
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DB {
-
-    // CHANGE THESE 4 VALUES to match your MySQL Workbench connection
-    private static final String HOST = "localhost";
-    private static final String PORT = "3306";
-    private static final String DB_NAME = "ocean_view_resort";
-    private static final String USER = "root";
-    private static final String PASS = "20030814";
-
+public final class DB {
     private static final String URL =
-            "jdbc:mysql://" + HOST + ":" + PORT + "/" + DB_NAME
-            + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            "jdbc:mysql://localhost:3306/ocean_view_resort?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    private static final String USER = "root";
+    private static final String PASS = "20030814"; // your password
+
+    private DB() {}
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASS);
