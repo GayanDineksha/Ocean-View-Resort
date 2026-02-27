@@ -76,11 +76,9 @@ public class ReservationDAO {
 
    
     public boolean createReservation(Reservation res) {
-        String query = "INSERT INTO reservations (reservation_number, guest_id, room_id, check_in_date, check_out_date, adults, children, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
+        String sql = "INSERT INTO reservations (reservation_number, guest_id, room_id, check_in_date, check_out_date, adults, children, special_requests, reservation_status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)";        
         try (Connection con = DB.getConnection();
-             PreparedStatement pst = con.prepareStatement(query)) {
-            
+             PreparedStatement pst = con.prepareStatement(sql)) { // මෙතන 'query' එක 'sql' කරා
             
             String resNo = "RES-" + System.currentTimeMillis(); 
             
@@ -91,7 +89,8 @@ public class ReservationDAO {
             pst.setDate(5, res.getCheckOutDate());
             pst.setInt(6, res.getAdults());
             pst.setInt(7, res.getChildren());
-            pst.setString(8, "Pending"); 
+            pst.setString(8, "None");       // 8 වෙනියට special_requests දැම්මා
+            pst.setString(9, "pending");    // 9 වෙනියට reservation_status දැම්මා
             
             int rows = pst.executeUpdate();
             return rows > 0; 
