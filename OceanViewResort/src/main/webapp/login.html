@@ -107,7 +107,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         .then(data => {
             // Scope Rule: Session management and Role-based access
             // Save the user data in Session Storage
-            sessionStorage.setItem("loggedInUser", data.username);
+            sessionStorage.setItem("loggedInUser", data.username || data.name || "User");
             sessionStorage.setItem("userRole", data.role); // e.g., Admin, Receptionist, Manager
 
             // Redirect to Dashboard
@@ -124,6 +124,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         });
     });
 </script>
+
 
 </body>
 </html>>

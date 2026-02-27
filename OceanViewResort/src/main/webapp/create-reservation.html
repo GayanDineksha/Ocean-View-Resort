@@ -96,8 +96,20 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
 </div>
 
 <script>
+    const currentUser = sessionStorage.getItem("loggedInUser");
+        const userRole = sessionStorage.getItem("userRole");
+
+      
+        if (!currentUser || !userRole) {
+            window.location.href = "login.html";
+        } 
+       
+        else if (userRole.toLowerCase() !== 'receptionist') {
+            alert("Access Denied! Only Receptionists can create new reservations.");
+            window.location.href = "dashboard.html"; 
+        }
     document.getElementById("reservationForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Prevent page from refreshing
+        event.preventDefault();
 
         // 1. Get data from form fields
         const reservationData = {
