@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Reservation - Ocean View Resort</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; }
+        .card { border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .hotel-header { background-color: #0056b3; color: white; padding: 20px; border-radius: 15px 15px 0 0; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="hotel-header">
+                    <h2>Ocean View Resort</h2>
+                    <p class="mb-0">Add New Reservation</p>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <div id="alertBox" class="alert d-none" role="alert"></div>
+
+                    <form id="reservationForm">
+                        <h5 class="mb-3 text-primary">Guest Details</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="guestName" required placeholder="e.g. Sunil Perera">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">NIC / Passport</label>
+                                <input type="text" class="form-control" id="nicPassport" required placeholder="e.g. 199012345678">
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Contact Number</label>
+                                <input type="text" class="form-control" id="contactNumber" required placeholder="e.g. 0770000000">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" required placeholder="e.g. sunil@example.com">
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 text-primary">Booking Details</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Room Category</label>
+                                <select class="form-select" id="roomId" required>
+                                    <option value="" disabled selected>Select a Room...</option>
+                                    <option value="1">101 - Deluxe Ocean View</option>
+                                    <option value="2">102 - Standard Garden View</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Check-in Date</label>
+                                <input type="date" class="form-control" id="checkInDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Check-out Date</label>
+                                <input type="date" class="form-control" id="checkOutDate" required>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Adults</label>
+                                <input type="number" class="form-control" id="adults" min="1" value="1" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Children</label>
+                                <input type="number" class="form-control" id="children" min="0" value="0" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">Confirm Reservation</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("reservationForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent page from refreshing
+
+        // 1. Get data from form fields
+        const reservationData = {
+            guestName: document.getElementById("guestName").value,
+            nicPassport: document.getElementById("nicPassport").value,
+            contactNumber: document.getElementById("contactNumber").value,
+            email: document.getElementById("email").value,
+            roomId: parseInt(document.getElementById("roomId").value),
+            checkInDate: document.getElementById("checkInDate").value,
+            checkOutDate: document.getElementById("checkOutDate").value,
+            adults: parseInt(document.getElementById("adults").value),
+            children: parseInt(document.getElementById("children").value)
+        };
+
+        const alertBox = document.getElementById("alertBox");
+        const submitBtn = document.getElementById("submitBtn");
+
+        submitBtn.innerHTML = "Processing...";
+        submitBtn.disabled = true;
+
+        // 2. Send data to our Java backend API (Like we did in Postman)
+        fetch("http://localhost:8080/OceanViewResort/resources/reservations/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(reservationData)
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Failed to create reservation. Room might be unavailable.");
+            }
+        })
+        .then(data => {
+            // 3. Show success message
+            alertBox.className = "alert alert-success";
+            alertBox.innerHTML = "<strong>Success!</strong> Reservation created successfully!";
+            document.getElementById("reservationForm").reset(); // Clear form
+        })
+        .catch(error => {
+            // 4. Show error message
+            alertBox.className = "alert alert-danger";
+            alertBox.innerHTML = "<strong>Error!</strong> " + error.message;
+        })
+        .finally(() => {
+            alertBox.classList.remove("d-none");
+            submitBtn.innerHTML = "Confirm Reservation";
+            submitBtn.disabled = false;
+        });
+    });
+</script>
+
+</body>
+</html>
