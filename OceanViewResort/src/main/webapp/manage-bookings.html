@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Bookings - Ocean View Resort</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; }
+        .topbar { background: white; padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .table th { background-color: #004080; color: white; }
+        .status-badge { font-size: 0.85rem; padding: 5px 10px; border-radius: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="topbar d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-0 fw-bold text-primary"><i class="bi bi-journal-check"></i> Manage Bookings</h4>
+        </div>
+        <div>
+            <button class="btn btn-outline-secondary" onclick="window.location.href='dashboard.html'"><i class="bi bi-arrow-left"></i> Back to Dashboard</button>
+        </div>
+    </div>
+
+    <div class="container-fluid px-4">
+        <div class="card p-4">
+            
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search by Guest Name or Res No..." onkeyup="searchTable()">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="statusFilter" onchange="searchTable()">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Checked in">Checked in</option>
+                        <option value="Checked out">Checked out</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-md-5 text-end">
+                    <button class="btn btn-primary" onclick="window.location.href='create-reservation.html'"><i class="bi bi-plus-circle"></i> New Booking</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="bookingsTable">
+                    <thead>
+                        <tr>
+                            <th>Res. No</th>
+                            <th>Guest Name</th>
+                            <th>Room Details</th>
+                            <th>Check-In</th>
+                            <th>Check-Out</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">Loading reservations...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 1. Security Check
+        const userRole = sessionStorage.getItem("userRole");
+        if (!userRole || userRole.toLowerCase() !== 'receptionist') {
+            alert("Access Denied! Only Receptionists can manage bookings.");
+            window.location.href = "dashboard.html";
+        }
+
+        // 2. Load Real Data from API when page loads
+        document.addEventListener("DOMContentLoaded", loadReservations);
+
+        function loadReservations() {
+            fetch('https://localhost:8181/OceanViewResort/resources/reservations')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById("tableBody");
+                    tableBody.innerHTML = ""; // Clear existing dummy data
+
+                    if(data.length === 0) {
+                        tableBody.innerHTML = "<tr><td colspan='7' class='text-center text-muted'>No reservations found.</td></tr>";
+                        return;
+                    }
+
+                    data.forEach(res => {
+                        // Status Badge Colors (Fixed capitalization to match backend)
+                        let badgeClass = "bg-secondary";
+                        let statusText = res.status;
+                        
+                        if (statusText === "Pending") badgeClass = "bg-warning text-dark";
+                        else if (statusText === "Confirmed") badgeClass = "bg-primary";
+                        else if (statusText === "Checked in") badgeClass = "bg-success";
+                        else if (statusText === "Checked out") badgeClass = "bg-dark";
+                        else if (statusText === "Cancelled") badgeClass = "bg-danger";
+
+                        // Action Buttons based on Status
+                        let actionButtons = "";
+                        
+                        if (statusText === "Pending") {
+                            actionButtons = `
+                                <button class="btn btn-sm btn-success me-1" onclick="updateStatus(${res.reservationId}, 'confirmed')" title="Confirm"><i class="bi bi-check-lg"></i></button>
+                                <button class="btn btn-sm btn-danger" onclick="updateStatus(${res.reservationId}, 'cancelled')" title="Cancel"><i class="bi bi-x-circle"></i></button>
+                            `;
+                        } else if (statusText === "Confirmed") {
+                            actionButtons = `
+                                <button class="btn btn-sm btn-info text-white" onclick="updateStatus(${res.reservationId}, 'checked_in')" title="Check-in"><i class="bi bi-box-arrow-in-right"></i> Check-in</button>
+                            `;
+                        } else if (statusText === "Checked in") {
+                            actionButtons = `
+                                <button class="btn btn-sm btn-dark" onclick="updateStatus(${res.reservationId}, 'checked_out')" title="Check-out"><i class="bi bi-box-arrow-right"></i> Check-out</button>
+                            `;
+                        }
+
+                        // Create Row
+                        const row = `
+                            <tr>
+                                <td class="fw-bold">${res.reservationNumber}</td>
+                                <td>${res.guestName}</td>
+                                <td>${res.roomDetails}</td>
+                                <td>${res.checkIn}</td>
+                                <td>${res.checkOut}</td>
+                                <td><span class="badge ${badgeClass} status-badge">${statusText}</span></td>
+                                <td>${actionButtons}</td>
+                            </tr>
+                        `;
+                        tableBody.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching data: ", error);
+                    document.getElementById("tableBody").innerHTML = "<tr><td colspan='7' class='text-center text-danger'>Error loading data.</td></tr>";
+                });
+        }
+
+        // 3. Update Status Function
+        function updateStatus(reservationId, newStatus) {
+            if (!confirm("Are you sure you want to update this booking?")) {
+                return;
+            }
+
+            const requestData = { status: newStatus };
+
+            fetch(`http://localhost:8080/OceanViewResort/resources/reservations/${reservationId}/status`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    // Reload table to show updated status and new buttons
+                    loadReservations(); 
+                } else {
+                    alert("Error updating status: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Failed to connect to the server.");
+            });
+        }
+
+        // 4. Search & Filter Table Frontend Logic
+        function searchTable() {
+            let searchInput = document.getElementById("searchInput").value.toLowerCase();
+            let statusFilter = document.getElementById("statusFilter").value.toLowerCase();
+            let table = document.getElementById("bookingsTable");
+            let tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) {
+                // index 0 is Res No, index 1 is Guest Name, index 5 is Status
+                let resNoColumn = tr[i].getElementsByTagName("td")[0];
+                let nameColumn = tr[i].getElementsByTagName("td")[1];
+                let statusColumn = tr[i].getElementsByTagName("td")[5];
+                
+                if (nameColumn && statusColumn && resNoColumn) {
+                    let nameText = nameColumn.textContent || nameColumn.innerText;
+                    let resNoText = resNoColumn.textContent || resNoColumn.innerText;
+                    let statusText = statusColumn.textContent || statusColumn.innerText;
+                    
+                    let matchesSearch = nameText.toLowerCase().includes(searchInput) || resNoText.toLowerCase().includes(searchInput);
+                    let matchesStatus = statusFilter === "" || statusText.toLowerCase().includes(statusFilter);
+
+                    if (matchesSearch && matchesStatus) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }       
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
