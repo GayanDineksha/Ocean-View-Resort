@@ -12,15 +12,19 @@ public class ReservationDTO {
     private int reservationId;
     private String reservationNumber;
     
+    // --- Guest Details ---
     private int guestId;
     private String guestName;
     private String guestNic;
     private String guestPhone;
     private String guestEmail;
     
+    // --- Reservation Details ---
     private String roomDetails; 
     private String checkIn;
     private String checkOut;
+    private int adults;     
+    private int children;   
     private String status;
 
     public ReservationDTO() {
@@ -56,6 +60,12 @@ public class ReservationDTO {
 
     public String getCheckOut() { return checkOut; }
     public void setCheckOut(String checkOut) { this.checkOut = checkOut; }
+
+    public int getAdults() { return adults; }
+    public void setAdults(int adults) { this.adults = adults; }
+
+    public int getChildren() { return children; }
+    public void setChildren(int children) { this.children = children; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }

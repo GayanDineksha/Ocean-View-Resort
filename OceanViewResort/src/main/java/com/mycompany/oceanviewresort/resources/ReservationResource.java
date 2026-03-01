@@ -33,7 +33,6 @@ public class ReservationResource {
     public Response createReservation(String jsonInput) {
         try {
             JSONObject json = new JSONObject(jsonInput);            
-       
             Guest guest = new Guest();
             guest.setGuestName(json.getString("guestName"));
             guest.setNicPassport(json.getString("nicPassport"));
@@ -46,20 +45,15 @@ public class ReservationResource {
             int adults = json.getInt("adults");
             int children = json.getInt("children");
             
-            boolean isAvailable = reservationDAO.checkRoomAvailability(roomId, checkIn, checkOut);
-            
-            if (!isAvailable) {
+            if (!reservationDAO.checkRoomAvailability(roomId, checkIn, checkOut)) {
                 return Response.status(Response.Status.CONFLICT)
-                        .entity("{\"status\":\"error\", \"message\":\"Room is not available for the selected dates.\"}")
-                        .build();
+                        .entity("{\"status\":\"error\", \"message\":\"Room is not available for the selected dates.\"}").build();
             }
 
             int guestId = reservationDAO.findOrCreateGuest(guest);
-            
             if (guestId <= 0) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity("{\"status\":\"error\", \"message\":\"Failed to process guest information.\"}")
-                        .build();
+                        .entity("{\"status\":\"error\", \"message\":\"Failed to process guest information.\"}").build();
             }
             
             Reservation res = new Reservation();
@@ -70,21 +64,15 @@ public class ReservationResource {
             res.setAdults(adults);
             res.setChildren(children);
             
-            boolean success = reservationDAO.createReservation(res);
-            
-            if (success) {
+            if (reservationDAO.createReservation(res)) {
                 return Response.ok("{\"status\":\"success\", \"message\":\"Reservation created successfully!\"}").build();
             } else {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity("{\"status\":\"error\", \"message\":\"Failed to save reservation.\"}")
-                        .build();
+                        .entity("{\"status\":\"error\", \"message\":\"Failed to save reservation.\"}").build();
             }
-            
         } catch (Exception e) {
-            e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"status\":\"error\", \"message\":\"Invalid request format or missing data.\"}")
-                    .build();
+                    .entity("{\"status\":\"error\", \"message\":\"Invalid request format.\"}").build();
         }
     }
 
@@ -95,7 +83,6 @@ public class ReservationResource {
             List<ReservationDTO> list = reservationDAO.getAllReservations();
             return Response.ok(list).build();
         } catch (Exception e) {
-            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                            .entity("{\"status\":\"error\", \"message\":\"Failed to fetch reservations\"}").build();
         }
@@ -109,42 +96,44 @@ public class ReservationResource {
         try {
             JSONObject json = new JSONObject(jsonInput);
             String newStatus = json.getString("status");
-            
-            boolean success = reservationDAO.updateReservationStatus(id, newStatus);
-            if (success) {
+            if (reservationDAO.updateReservationStatus(id, newStatus)) {
                 return Response.ok("{\"status\":\"success\", \"message\":\"Status updated successfully!\"}").build();
             } else {
                 return Response.status(Response.Status.BAD_REQUEST)
                                .entity("{\"status\":\"error\", \"message\":\"Failed to update status\"}").build();
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                            .entity("{\"status\":\"error\", \"message\":\"Server error occurred\"}").build();
         }
     }
 
+    // අලුත්ම API එක (Guest Details සහ Booking Details එකට අප්ඩේට් කරන)
     @PUT
-    @Path("/guest/{id}")
+    @Path("/details/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateGuestDetails(@PathParam("id") int guestId, String jsonInput) {
+    public Response updateBookingAndGuestDetails(@PathParam("id") int resId, String jsonInput) {
         try {
             JSONObject json = new JSONObject(jsonInput);
             
-            Guest guest = new Guest();
-            guest.setGuestId(guestId);
-            guest.setGuestName(json.getString("guestName"));
-            guest.setNicPassport(json.getString("guestNic"));
-            guest.setContactNumber(json.getString("guestPhone"));
-            guest.setEmail(json.getString("guestEmail"));
+            ReservationDTO dto = new ReservationDTO();
+            dto.setReservationId(resId);
+            dto.setGuestId(json.getInt("guestId"));
+            dto.setGuestName(json.getString("guestName"));
+            dto.setGuestNic(json.getString("guestNic"));
+            dto.setGuestPhone(json.getString("guestPhone"));
+            dto.setGuestEmail(json.getString("guestEmail"));
+            dto.setCheckOut(json.getString("checkOut"));
+            dto.setAdults(json.getInt("adults"));
+            dto.setChildren(json.getInt("children"));
             
-            boolean success = reservationDAO.updateGuestDetails(guest);
+            boolean success = reservationDAO.updateBookingAndGuestDetails(dto);
             if (success) {
-                return Response.ok("{\"status\":\"success\", \"message\":\"Guest details updated successfully!\"}").build();
+                return Response.ok("{\"status\":\"success\", \"message\":\"Details updated successfully!\"}").build();
             } else {
                 return Response.status(Response.Status.BAD_REQUEST)
-                               .entity("{\"status\":\"error\", \"message\":\"Failed to update guest details\"}").build();
+                               .entity("{\"status\":\"error\", \"message\":\"Failed to update details\"}").build();
             }
         } catch (Exception e) {
             e.printStackTrace();
