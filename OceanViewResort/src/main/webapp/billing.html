@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing & Invoicing - Ocean View Resort</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; }
+        .topbar { background: white; padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .invoice-box { background: white; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+        
+        /* Updated Print Styles to fix cut-off text */
+        @media print {
+            body { background-color: white !important; }
+            body * { visibility: hidden; }
+            #invoiceArea, #invoiceArea * { visibility: visible; }
+            #invoiceArea { 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
+                margin: 0;
+                padding: 20px 40px; /* Added padding to prevent text cut-off */
+                box-shadow: none; 
+                border: none; 
+            }
+            .no-print { display: none !important; }
+            /* Auto set to portrait */
+            @page {
+                size: portrait;
+                margin: 1cm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar d-flex justify-content-between align-items-center mb-4 no-print">
+        <div>
+            <h4 class="mb-0 fw-bold text-primary"><i class="bi bi-receipt"></i> Billing & Invoicing</h4>
+        </div>
+        <div>
+            <button class="btn btn-outline-secondary" onclick="window.location.href='dashboard.html'"><i class="bi bi-arrow-left"></i> Back to Dashboard</button>
+        </div>
+    </div>
+
+    <div class="container-fluid px-4 mb-5">
+        <div class="row">
+            
+            <div class="col-md-4 no-print">
+                <div class="card p-4 mb-4">
+                    <h5 class="fw-bold mb-3">Select Reservation</h5>
+                    <div class="input-group mb-3">
+                        <select class="form-select" id="resSelect">
+                            <option value="">-- Select Guest / Reservation --</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="loadBill()"><i class="bi bi-search"></i> Go</button>
+                    </div>
+                    <div id="actionArea" class="mt-3 text-center">
+                        <p class="text-muted small">Select a guest from the list to view or generate their bill.</p>
+                    </div>
+                </div>
+
+                <div class="card p-4" id="paymentSection" style="display: none;">
+                    <h5 class="fw-bold mb-3 text-success"><i class="bi bi-cash-coin"></i> Add Payment</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Payment Method</label>
+                        <select class="form-select" id="payMethod">
+                            <option value="cash">Cash</option>
+                            <option value="card">Credit / Debit Card</option>
+                            <option value="online">Online Transfer</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Amount (Rs.)</label>
+                        <input type="number" class="form-control" id="payAmount" placeholder="0.00">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reference No (Optional)</label>
+                        <input type="text" class="form-control" id="payRef" placeholder="e.g. Txn ID or Card Last 4">
+                    </div>
+                    <button class="btn btn-success w-100" onclick="makePayment()">Process Payment</button>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="invoice-box" id="invoiceArea" style="display: none;">
+                    
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+                        <div>
+                            <h2 class="fw-bold text-primary mb-0">OCEAN VIEW RESORT</h2>
+                            <p class="text-muted mb-0">123 Beach Road, Galle, Sri Lanka</p>
+                            <p class="text-muted mb-0">Tel: +94 11 234 5678 | Email: info@oceanview.com</p>
+                        </div>
+                        <div class="text-end">
+                            <h3 class="fw-bold text-secondary">INVOICE</h3>
+                            <p class="mb-0"><strong>Bill No:</strong> <span id="invBillNo">---</span></p>
+                            <p class="mb-0"><strong>Date:</strong> <span id="invDate">---</span></p>
+                            <span class="badge bg-secondary mt-2 fs-6" id="invStatus">Unknown</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-sm-6">
+                            <h6 class="fw-bold text-muted mb-1">Billed To:</h6>
+                            <h5 class="fw-bold mb-1" id="invGuestName">Guest Name</h5>
+                            <p class="mb-0"><strong>Res No:</strong> <span id="invResNo">---</span></p>
+                            <input type="hidden" id="hiddenPhone">
+                            <input type="hidden" id="hiddenEmail">
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered mb-4">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Description</th>
+                                <th class="text-end">Amount (Rs.)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Room Charges (Nights &times; Rate)</td>
+                                <td class="text-end" id="invRoom">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Additional Services</td>
+                                <td class="text-end" id="invService">0.00</td>
+                            </tr>
+                            <tr class="fw-bold">
+                                <td class="text-end">Subtotal:</td>
+                                <td class="text-end" id="invSub">0.00</td>
+                            </tr>
+                            <tr>
+                                <td class="text-end">Taxes:</td>
+                                <td class="text-end" id="invTax">0.00</td>
+                            </tr>
+                            <tr class="text-danger">
+                                <td class="text-end">Discount:</td>
+                                <td class="text-end">- <span id="invDiscount">0.00</span></td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-light fw-bold fs-5">
+                            <tr>
+                                <td class="text-end text-primary">GRAND TOTAL:</td>
+                                <td class="text-end text-primary" id="invTotal">0.00</td>
+                            </tr>
+                            <tr class="fs-6 text-success">
+                                <td class="text-end">Amount Paid:</td>
+                                <td class="text-end" id="invPaid">0.00</td>
+                            </tr>
+                            <tr class="fs-6 text-danger">
+                                <td class="text-end">Balance Due:</td>
+                                <td class="text-end" id="invBalance">0.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="text-center mt-5">
+                        <p class="text-muted font-italic">Thank you for staying with Ocean View Resort. We hope to see you again!</p>
+                    </div>
+
+                    <div class="text-end mt-4 no-print border-top pt-3">
+                        <button class="btn btn-success me-2" onclick="shareWhatsApp()"><i class="bi bi-whatsapp"></i> WhatsApp</button>
+                        <button class="btn btn-info text-white me-2" onclick="shareEmail()"><i class="bi bi-envelope"></i> Email</button>
+                        <button class="btn btn-secondary" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const userRole = sessionStorage.getItem("userRole");
+        if (!userRole || userRole.toLowerCase() !== 'receptionist') {
+            alert("Access Denied! Only Receptionists can access billing.");
+            window.location.href = "dashboard.html";
+        }
+
+        let currentBillId = null;
+        let currentResId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('https://localhost:8181/OceanViewResort/resources/reservations')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById("resSelect");
+                    data.forEach(res => {
+                        if(res.status !== "Cancelled") {
+                            let option = document.createElement("option");
+                            option.value = res.reservationId;
+                            option.text = `${res.guestName} (${res.reservationNumber})`;
+                            select.appendChild(option);
+                        }
+                    });
+                })
+                .catch(err => console.error("Error loading dropdown: ", err));
+        });
+
+        function loadBill() {
+            const resId = document.getElementById("resSelect").value;
+            if (!resId) { alert("Please select a guest from the list!"); return; }
+            
+            currentResId = resId;
+
+            fetch(`https://localhost:8181/OceanViewResort/resources/billing/reservation/${resId}`)
+                .then(response => {
+                    if (response.status === 404) {
+                        document.getElementById("invoiceArea").style.display = "none";
+                        document.getElementById("paymentSection").style.display = "none";
+                        document.getElementById("actionArea").innerHTML = `
+                            <div class="alert alert-warning">No bill found for this reservation.</div>
+                            <button class="btn btn-warning w-100 fw-bold" onclick="generateBill()"><i class="bi bi-file-earmark-plus"></i> Generate Bill Now</button>
+                        `;
+                        return null;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.billId) displayBill(data);
+                    else if (data && data.status === "error") alert(data.message);
+                })
+                .catch(err => console.error(err));
+        }
+
+        function generateBill() {
+            if (!currentResId) return;
+            fetch(`https://localhost:8181/OceanViewResort/resources/billing/generate/${currentResId}`, { method: "POST" })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Bill generated successfully!");
+                    loadBill();
+                } else alert("Error: " + data.message);
+            })
+            .catch(err => console.error(err));
+        }
+
+        function displayBill(bill) {
+            currentBillId = bill.billId;
+            document.getElementById("invoiceArea").style.display = "block";
+            document.getElementById("actionArea").innerHTML = `<div class="alert alert-success"><i class="bi bi-check-circle"></i> Bill loaded successfully.</div>`;
+            
+            document.getElementById("invBillNo").innerText = bill.billNumber;
+            document.getElementById("invDate").innerText = bill.billDate.split(" ")[0];
+            document.getElementById("invGuestName").innerText = bill.guestName;
+            document.getElementById("invResNo").innerText = bill.reservationNumber;
+
+            document.getElementById("hiddenPhone").value = bill.guestPhone !== 'null' ? bill.guestPhone : '';
+            document.getElementById("hiddenEmail").value = bill.guestEmail !== 'null' ? bill.guestEmail : '';
+
+            document.getElementById("invRoom").innerText = bill.roomCharges.toFixed(2);
+            document.getElementById("invService").innerText = bill.serviceCharges.toFixed(2);
+            document.getElementById("invSub").innerText = (bill.roomCharges + bill.serviceCharges).toFixed(2);
+            document.getElementById("invTax").innerText = bill.taxAmount.toFixed(2);
+            document.getElementById("invDiscount").innerText = bill.discountAmount.toFixed(2);
+            
+            document.getElementById("invTotal").innerText = bill.totalAmount.toFixed(2);
+            document.getElementById("invPaid").innerText = bill.amountPaid.toFixed(2);
+            document.getElementById("invBalance").innerText = bill.balanceDue.toFixed(2);
+
+            const statusBadge = document.getElementById("invStatus");
+            statusBadge.innerText = bill.paymentStatus;
+            statusBadge.className = "badge mt-2 fs-6 ";
+            
+            if (bill.paymentStatus === "Paid") {
+                statusBadge.classList.add("bg-success");
+                document.getElementById("paymentSection").style.display = "none";
+            } else if (bill.paymentStatus === "Partial") {
+                statusBadge.classList.add("bg-warning", "text-dark");
+                document.getElementById("paymentSection").style.display = "block";
+                document.getElementById("payAmount").value = bill.balanceDue.toFixed(2);
+            } else {
+                statusBadge.classList.add("bg-danger");
+                document.getElementById("paymentSection").style.display = "block";
+                document.getElementById("payAmount").value = bill.totalAmount.toFixed(2);
+            }
+        }
+
+        function makePayment() {
+            if (!currentBillId) return;
+            const amount = parseFloat(document.getElementById("payAmount").value);
+            const method = document.getElementById("payMethod").value;
+            const ref = document.getElementById("payRef").value;
+
+            if (isNaN(amount) || amount <= 0) { alert("Please enter a valid amount."); return; }
+
+            fetch(`https://localhost:8181/OceanViewResort/resources/billing/pay`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ billId: currentBillId, method: method, amount: amount, reference: ref })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Payment processed!");
+                    document.getElementById("payAmount").value = "";
+                    document.getElementById("payRef").value = "";
+                    loadBill();
+                } else alert("Error: " + data.message);
+            })
+            .catch(err => console.error(err));
+        }
+
+        function shareWhatsApp() {
+            let phone = document.getElementById("hiddenPhone").value;
+            if (!phone) { alert("Guest phone number is missing!"); return; }
+            
+            if(phone.startsWith('0')) { phone = '94' + phone.substring(1); }
+            
+            let billNo = document.getElementById("invBillNo").innerText;
+            let total = document.getElementById("invTotal").innerText;
+            let balance = document.getElementById("invBalance").innerText;
+            
+            let msg = `Hello! Thank you for staying at Ocean View Resort. %0A%0AHere are your billing details:%0A*Bill No:* ${billNo}%0A*Total Amount:* Rs. ${total}%0A*Balance Due:* Rs. ${balance}%0A%0AWe hope to see you again!`;
+            
+            window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+        }
+
+        function shareEmail() {
+            let email = document.getElementById("hiddenEmail").value;
+            if (!email) { alert("Guest email address is missing!"); return; }
+            
+            let billNo = document.getElementById("invBillNo").innerText;
+            let name = document.getElementById("invGuestName").innerText;
+            let total = document.getElementById("invTotal").innerText;
+            
+            let subject = encodeURIComponent(`Invoice from Ocean View Resort - ${billNo}`);
+            let body = encodeURIComponent(`Dear ${name},\n\nThank you for choosing Ocean View Resort.\n\nYour Total Bill Amount is Rs. ${total}.\nPlease find the invoice attached (or collect at reception).\n\nBest Regards,\nOcean View Resort Team`);
+            
+            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
