@@ -31,7 +31,6 @@ public class BillingDAO {
 
     public BillDTO getBillByReservationId(int reservationId) {
         BillDTO bill = null;
-        // අලුත් කෑල්ල: contact_number සහ email ගන්නවා
         String query = "SELECT b.*, r.reservation_number, g.guest_name, g.contact_number, g.email " +
                        "FROM bills b " +
                        "JOIN reservations r ON b.reservation_id = r.reservation_id " +
@@ -48,8 +47,8 @@ public class BillingDAO {
                     bill.setBillNumber(rs.getString("bill_number"));
                     bill.setReservationId(rs.getInt("reservation_id"));
                     bill.setGuestName(rs.getString("guest_name"));
-                    bill.setGuestPhone(rs.getString("contact_number")); // අලුතින් දැම්මා
-                    bill.setGuestEmail(rs.getString("email")); // අලුතින් දැම්මා
+                    bill.setGuestPhone(rs.getString("contact_number")); // 
+                    bill.setGuestEmail(rs.getString("email")); // 
                     bill.setReservationNumber(rs.getString("reservation_number"));
                     
                     bill.setRoomCharges(rs.getDouble("room_charges"));

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Audit Logs - Ocean View Resort</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; }
+        .topbar { background: white; padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .table th { background-color: #343a40; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="topbar d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-0 fw-bold text-dark"><i class="bi bi-shield-lock-fill text-danger"></i> System Audit Logs</h4>
+            <small class="text-muted">Monitor all critical data modifications in real-time.</small>
+        </div>
+        <div>
+            <button class="btn btn-outline-secondary" onclick="window.location.href='dashboard.html'"><i class="bi bi-arrow-left"></i> Back to Dashboard</button>
+        </div>
+    </div>
+
+    <div class="container-fluid px-4">
+        <div class="card p-4">
+            
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search by User, Table or Action..." onkeyup="searchLogs()">
+                </div>
+                <div class="col-md-8 text-end">
+                    <button class="btn btn-dark" onclick="loadLogs()"><i class="bi bi-arrow-clockwise"></i> Refresh Logs</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="logsTable">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Table</th>
+                            <th>Record ID</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr><td colspan="6" class="text-center text-muted">Loading logs...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="viewChangesModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text"></i> Data Modification Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 30%;">Field Name</th>
+                                    <th style="width: 35%;" class="text-danger">Old Value</th>
+                                    <th style="width: 35%;" class="text-success">New Value</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparisonTableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Security Check: Only Admins allowed
+        const userRole = sessionStorage.getItem("userRole");
+        if (!userRole || userRole.toLowerCase() !== 'admin') {
+            alert("Access Denied! Only Administrators can access this page.");
+            window.location.href = "dashboard.html";
+        }
+
+        document.addEventListener("DOMContentLoaded", loadLogs);
+
+        let currentLogs = []; // Store globally for the modal
+
+        function loadLogs() {
+            fetch('https://localhost:8181/OceanViewResort/resources/audit-logs')
+                .then(response => response.json())
+                .then(data => {
+                    currentLogs = data;
+                    const tableBody = document.getElementById("tableBody");
+                    tableBody.innerHTML = "";
+
+                    if(data.length === 0) {
+                        tableBody.innerHTML = "<tr><td colspan='6' class='text-center text-muted'>No audit logs found.</td></tr>";
+                        return;
+                    }
+
+                    data.forEach((log, index) => {
+                        let actionBadge = "bg-primary";
+                        if(log.actionType === 'INSERT') actionBadge = "bg-success";
+                        if(log.actionType === 'UPDATE') actionBadge = "bg-warning text-dark";
+                        if(log.actionType === 'DELETE') actionBadge = "bg-danger";
+
+                        let row = `
+                            <tr>
+                                <td class="text-muted"><small>${log.actionTimestamp}</small></td>
+                                <td class="fw-bold text-primary">@${log.username}</td>
+                                <td><span class="badge ${actionBadge}">${log.actionType}</span></td>
+                                <td class="text-uppercase">${log.tableName}</td>
+                                <td>#${log.recordId}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-dark" onclick="viewChanges(${index})">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        tableBody.innerHTML += row;
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById("tableBody").innerHTML = "<tr><td colspan='6' class='text-center text-danger'>Failed to load data.</td></tr>";
+                });
+        }
+
+        function viewChanges(index) {
+            const log = currentLogs[index];
+            let oldObj = {}, newObj = {};
+            
+            
+            try { if(log.oldValues && log.oldValues !== "null") oldObj = JSON.parse(log.oldValues); } catch(e){}
+            try { if(log.newValues && log.newValues !== "null") newObj = JSON.parse(log.newValues); } catch(e){}
+
+
+            const allKeys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
+            let tbody = "";
+
+            if(allKeys.size === 0) {
+                tbody = "<tr><td colspan='3' class='text-center text-muted'>No details available for this action.</td></tr>";
+            } else {
+                allKeys.forEach(key => {
+                    let oldVal = oldObj[key] !== undefined && oldObj[key] !== null ? oldObj[key] : '<span class="text-muted">- None -</span>';
+                    let newVal = newObj[key] !== undefined && newObj[key] !== null ? newObj[key] : '<span class="text-muted">- None -</span>';
+
+                   
+                    let rowClass = (oldVal !== newVal && oldObj[key] !== undefined && newObj[key] !== undefined) ? 'table-warning' : '';
+                    
+                  
+                    let niceKeyName = key.replace(/_/g, ' '); 
+
+                    tbody += `<tr class="${rowClass}">
+                        <td class="fw-bold text-capitalize text-muted">${niceKeyName}</td>
+                        <td class="text-danger">${oldVal}</td>
+                        <td class="text-success fw-bold">${newVal}</td>
+                    </tr>`;
+                });
+            }
+            
+            document.getElementById("comparisonTableBody").innerHTML = tbody;
+            var changesModal = new bootstrap.Modal(document.getElementById('viewChangesModal'));
+            changesModal.show();
+        }
+
+        function searchLogs() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let tr = document.getElementById("logsTable").getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) {
+                let userCol = tr[i].getElementsByTagName("td")[1];
+                let actionCol = tr[i].getElementsByTagName("td")[2];
+                let tableCol = tr[i].getElementsByTagName("td")[3];
+                
+                if (userCol && actionCol && tableCol) {
+                    let text1 = userCol.textContent || userCol.innerText;
+                    let text2 = actionCol.textContent || actionCol.innerText;
+                    let text3 = tableCol.textContent || tableCol.innerText;
+                    
+                    if (text1.toLowerCase().indexOf(input) > -1 || 
+                        text2.toLowerCase().indexOf(input) > -1 || 
+                        text3.toLowerCase().indexOf(input) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }       
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
