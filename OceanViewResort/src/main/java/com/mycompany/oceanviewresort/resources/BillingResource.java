@@ -29,7 +29,6 @@ public class BillingResource {
     @Path("/generate/{reservationId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response generateBill(@PathParam("reservationId") int reservationId) {
-        // මෙතන 1 කියලා යවන්නේ user_id එක (Receptionist ගේ ID එක)
         boolean success = billingDAO.generateBill(reservationId, 1); 
         
         if (success) {

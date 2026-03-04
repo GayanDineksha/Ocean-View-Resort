@@ -108,7 +108,6 @@ public class ReservationResource {
         }
     }
 
-    // අලුත්ම API එක (Guest Details සහ Booking Details එකට අප්ඩේට් කරන)
     @PUT
     @Path("/details/{id}")
     @Consumes(MediaType.APPLICATION_JSON)

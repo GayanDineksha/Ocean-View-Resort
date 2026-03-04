@@ -21,7 +21,7 @@ public class Reservation {
 
     public Reservation() {}
 
-    // Getters and Setters (අනිවාර්යයෙන්ම Generate කරගන්න NetBeans වලින් - Right Click -> Insert Code -> Getter and Setter)
+
     public int getReservationId() { return reservationId; }
     public void setReservationId(int reservationId) { this.reservationId = reservationId; }
     public String getReservationNumber() { return reservationNumber; }

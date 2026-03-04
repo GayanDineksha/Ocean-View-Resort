@@ -179,7 +179,7 @@
                             `;
                         }
 
-                        // Edit Button Logic (අලුත් Parameter ටික යවනවා)
+                  
                         let safeName = res.guestName ? res.guestName.replace(/'/g, "\\'") : "";
                         let editBtn = `<a class="edit-guest-btn ms-2" title="Edit Booking" onclick="openEditModal(${res.reservationId}, ${res.guestId}, '${safeName}', '${res.guestNic}', '${res.guestPhone}', '${res.guestEmail}', '${res.checkOut}', ${res.adults}, ${res.children})"><i class="bi bi-pencil-square"></i></a>`;
 
@@ -228,9 +228,6 @@
             });
         }
 
-        // ==============================================
-        // Advanced Edit Modal Functions
-        // ==============================================
         let editModalInstance;
 
         function openEditModal(resId, guestId, name, nic, phone, email, checkOut, adults, children) {
