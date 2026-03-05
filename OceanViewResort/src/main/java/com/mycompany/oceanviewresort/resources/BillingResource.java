@@ -24,12 +24,12 @@ public class BillingResource {
 
     private BillingDAO billingDAO = new BillingDAO();
 
-    
     @POST
     @Path("/generate/{reservationId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response generateBill(@PathParam("reservationId") int reservationId) {
-        boolean success = billingDAO.generateBill(reservationId, 1); 
+    public Response generateBill(@PathParam("reservationId") long reservationId) {
+        // Fallback to user ID 2 (Receptionist) for testing
+        boolean success = billingDAO.generateBill(reservationId, 2); 
         
         if (success) {
             return Response.ok("{\"status\":\"success\", \"message\":\"Bill generated successfully!\"}").build();
@@ -40,11 +40,10 @@ public class BillingResource {
         }
     }
 
-    
     @GET
     @Path("/reservation/{reservationId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBillByReservationId(@PathParam("reservationId") int reservationId) {
+    public Response getBillByReservationId(@PathParam("reservationId") long reservationId) {
         BillDTO bill = billingDAO.getBillByReservationId(reservationId);
         
         if (bill != null) {
@@ -56,7 +55,6 @@ public class BillingResource {
         }
     }
 
-
     @POST
     @Path("/pay")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -65,13 +63,13 @@ public class BillingResource {
         try {
             JSONObject json = new JSONObject(jsonInput);
             
-            int billId = json.getInt("billId");
-            String method = json.getString("method"); // 'cash', 'card', 'online', etc.
+            long billId = json.getLong("billId");
+            String method = json.getString("method"); 
             double amount = json.getDouble("amount");
-            String ref = json.optString("reference", "N/A"); // Reference එකක් නැත්නම් N/A කියලා දානවා
-
+            String ref = json.optString("reference", "N/A"); 
+            long userId = json.optLong("userId", 2); // Getting User ID from Frontend
             
-            boolean success = billingDAO.addPayment(billId, method, amount, ref, 1);
+            boolean success = billingDAO.addPayment(billId, method, amount, ref, userId);
             
             if (success) {
                 return Response.ok("{\"status\":\"success\", \"message\":\"Payment added successfully!\"}").build();

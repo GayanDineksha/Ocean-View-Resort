@@ -3,17 +3,19 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
 -->
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Reservation - Ocean View Resort</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body { background-color: #f4f7f6; }
-        .card { border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .hotel-header { background-color: #0056b3; color: white; padding: 20px; border-radius: 15px 15px 0 0; text-align: center; }
+        .card { border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: none; }
+        .hotel-header { background: linear-gradient(135deg, #004080 0%, #0059b3 100%); color: white; padding: 20px; border-radius: 15px 15px 0 0; text-align: center; position: relative; }
+        .back-btn { position: absolute; left: 20px; top: 25px; color: white; text-decoration: none; font-weight: bold; }
+        .back-btn:hover { color: #ffcc00; }
     </style>
 </head>
 <body>
@@ -23,7 +25,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         <div class="col-md-8">
             <div class="card">
                 <div class="hotel-header">
-                    <h2>Ocean View Resort</h2>
+                    <a href="dashboard.html" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+                    <h3 class="fw-bold"><i class="bi bi-calendar-plus"></i> Ocean View Resort</h3>
                     <p class="mb-0">Add New Reservation</p>
                 </div>
                 <div class="card-body p-4">
@@ -31,62 +34,70 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                     <div id="alertBox" class="alert d-none" role="alert"></div>
 
                     <form id="reservationForm">
-                        <h5 class="mb-3 text-primary">Guest Details</h5>
+                        <h5 class="mb-3 text-primary border-bottom pb-2"><i class="bi bi-person-lines-fill"></i> Guest Details</h5>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="form-label">Full Name</label>
+                                <label class="form-label fw-bold">Full Name</label>
                                 <input type="text" class="form-control" id="guestName" required placeholder="e.g. Sunil Perera">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">NIC / Passport</label>
+                                <label class="form-label fw-bold">NIC / Passport</label>
                                 <input type="text" class="form-control" id="nicPassport" required placeholder="e.g. 199012345678">
                             </div>
                         </div>
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <label class="form-label">Contact Number</label>
+                                <label class="form-label fw-bold">Contact Number</label>
                                 <input type="text" class="form-control" id="contactNumber" required placeholder="e.g. 0770000000">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Email Address</label>
-                                <input type="email" class="form-control" id="email" required placeholder="e.g. sunil@example.com">
+                                <label class="form-label fw-bold">Email Address</label>
+                                <input type="email" class="form-control" id="email" placeholder="e.g. sunil@example.com">
                             </div>
                         </div>
 
-                        <h5 class="mb-3 text-primary">Booking Details</h5>
+                        <h5 class="mb-3 text-primary border-bottom pb-2 mt-4"><i class="bi bi-journal-check"></i> Booking Details</h5>
                         <div class="row mb-3">
                             <div class="col-md-12">
-                                <label class="form-label">Room Category</label>
+                                <label class="form-label fw-bold">Room Selection</label>
                                 <select class="form-select" id="roomId" required>
                                     <option value="" disabled selected>Select a Room...</option>
-                                    <option value="1">101 - Deluxe Ocean View</option>
-                                    <option value="2">102 - Standard Garden View</option>
+                                    <option value="1">Room 101 - Deluxe Ocean View</option>
+                                    <option value="2">Room 102 - Standard Garden View</option>
+                                    <option value="3">Room 201 - Family Suite</option>
+                                    <option value="4">Room 202 - Deluxe Ocean View</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="form-label">Check-in Date</label>
+                                <label class="form-label fw-bold">Check-in Date</label>
                                 <input type="date" class="form-control" id="checkInDate" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Check-out Date</label>
+                                <label class="form-label fw-bold">Check-out Date</label>
                                 <input type="date" class="form-control" id="checkOutDate" required>
                             </div>
                         </div>
-                        <div class="row mb-4">
+                        <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="form-label">Adults</label>
+                                <label class="form-label fw-bold">Adults</label>
                                 <input type="number" class="form-control" id="adults" min="1" value="1" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Children</label>
+                                <label class="form-label fw-bold">Children</label>
                                 <input type="number" class="form-control" id="children" min="0" value="0" required>
                             </div>
                         </div>
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">Special Requests (Optional)</label>
+                                <textarea class="form-control" id="specialRequests" rows="2" placeholder="e.g. Need an extra bed, Late check-in..."></textarea>
+                            </div>
+                        </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">Confirm Reservation</button>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold" id="submitBtn"><i class="bi bi-check-circle"></i> Confirm Reservation</button>
                         </div>
                     </form>
                 </div>
@@ -96,73 +107,92 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
 </div>
 
 <script>
+    // Authentication Check
     const currentUser = sessionStorage.getItem("loggedInUser");
-        const userRole = sessionStorage.getItem("userRole");
+    const userRole = sessionStorage.getItem("userRole");
+    // Fallback ID to 2 (Receptionist) if not saved in session
+    const userId = sessionStorage.getItem("userId") || 2; 
 
-      
-        if (!currentUser || !userRole) {
-            window.location.href = "login.html";
-        } 
-       
-        else if (userRole.toLowerCase() !== 'receptionist') {
-            alert("Access Denied! Only Receptionists can create new reservations.");
-            window.location.href = "dashboard.html"; 
-        }
+    if (!currentUser || !userRole) {
+        window.location.href = "login.html";
+    } else if (userRole.toLowerCase() !== 'receptionist' && userRole.toLowerCase() !== 'admin') {
+        alert("Access Denied! Only Receptionists and Admins can create new reservations.");
+        window.location.href = "dashboard.html"; 
+    }
+
+    // Set minimum date for check-in to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("checkInDate").setAttribute('min', today);
+    document.getElementById("checkOutDate").setAttribute('min', today);
+
     document.getElementById("reservationForm").addEventListener("submit", function(event) {
         event.preventDefault();
+
+        const alertBox = document.getElementById("alertBox");
+        const submitBtn = document.getElementById("submitBtn");
+
+        // Basic validation for dates
+        const checkIn = document.getElementById("checkInDate").value;
+        const checkOut = document.getElementById("checkOutDate").value;
+
+        if (new Date(checkOut) <= new Date(checkIn)) {
+            alertBox.className = "alert alert-danger";
+            alertBox.innerHTML = "<strong>Error!</strong> Check-out date must be after Check-in date.";
+            alertBox.classList.remove("d-none");
+            return;
+        }
 
         // 1. Get data from form fields
         const reservationData = {
             guestName: document.getElementById("guestName").value,
             nicPassport: document.getElementById("nicPassport").value,
             contactNumber: document.getElementById("contactNumber").value,
-            email: document.getElementById("email").value,
+            email: document.getElementById("email").value || null,
             roomId: parseInt(document.getElementById("roomId").value),
-            checkInDate: document.getElementById("checkInDate").value,
-            checkOutDate: document.getElementById("checkOutDate").value,
+            checkInDate: checkIn,
+            checkOutDate: checkOut,
             adults: parseInt(document.getElementById("adults").value),
-            children: parseInt(document.getElementById("children").value)
+            children: parseInt(document.getElementById("children").value),
+            specialRequests: document.getElementById("specialRequests").value || null,
+            createdBy: parseInt(userId)
         };
 
-        const alertBox = document.getElementById("alertBox");
-        const submitBtn = document.getElementById("submitBtn");
-
-        submitBtn.innerHTML = "Processing...";
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
         submitBtn.disabled = true;
 
-        // 2. Send data to our Java backend API (Like we did in Postman)
-        fetch("http://localhost:8080/OceanViewResort/resources/reservations/create", {
+        // 2. Send data to our Java backend API
+        fetch("https://localhost:8181/OceanViewResort/resources/reservations", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(reservationData)
         })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alertBox.className = "alert alert-success";
+                alertBox.innerHTML = `<strong>Success!</strong> Reservation created successfully! Reservation No: <b>${data.reservationNumber}</b>`;
+                document.getElementById("reservationForm").reset(); 
             } else {
-                throw new Error("Failed to create reservation. Room might be unavailable.");
+                alertBox.className = "alert alert-danger";
+                alertBox.innerHTML = "<strong>Error!</strong> " + (data.message || "Failed to create reservation.");
             }
         })
-        .then(data => {
-            // 3. Show success message
-            alertBox.className = "alert alert-success";
-            alertBox.innerHTML = "<strong>Success!</strong> Reservation created successfully!";
-            document.getElementById("reservationForm").reset(); // Clear form
-        })
         .catch(error => {
-            // 4. Show error message
             alertBox.className = "alert alert-danger";
-            alertBox.innerHTML = "<strong>Error!</strong> " + error.message;
+            alertBox.innerHTML = "<strong>Error!</strong> Could not connect to the server.";
+            console.error(error);
         })
         .finally(() => {
             alertBox.classList.remove("d-none");
-            submitBtn.innerHTML = "Confirm Reservation";
+            submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Confirm Reservation';
             submitBtn.disabled = false;
+            window.scrollTo(0, 0); // Scroll to top to see message
         });
     });
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Services - Ocean View Resort</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; }
+        .card { border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: none; }
+        .topbar { background: white; padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+
+<div class="topbar d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-0 fw-bold text-primary"><i class="bi bi-cart-plus"></i> Add Extra Services</h4>
+        <small class="text-muted">Post food, spa, or laundry charges to a guest's room bill.</small>
+    </div>
+    <div>
+        <button class="btn btn-outline-secondary" onclick="window.location.href='dashboard.html'"><i class="bi bi-arrow-left"></i> Back to Dashboard</button>
+    </div>
+</div>
+
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4">
+                <div id="alertBox" class="alert d-none" role="alert"></div>
+
+                <form id="addServiceForm">
+                    <h5 class="mb-4 text-primary border-bottom pb-2">Service Details</h5>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Select Active Booking</label>
+                        <select class="form-select" id="reservationId" required>
+                            <option value="" disabled selected>Loading bookings...</option>
+                        </select>
+                        <small class="text-muted">Only Checked-in or Confirmed bookings are shown.</small>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold">Select Service</label>
+                            <select class="form-select" id="serviceId" required>
+                                <option value="" disabled selected>Loading services...</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Quantity</label>
+                            <input type="number" class="form-control" id="quantity" min="1" value="1" required>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold" id="submitBtn"><i class="bi bi-plus-circle"></i> Add to Room Bill</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Security Check
+    const userRole = sessionStorage.getItem("userRole");
+    const userId = sessionStorage.getItem("userId") || 2; 
+
+    if (!userRole || (userRole.toLowerCase() !== 'receptionist' && userRole.toLowerCase() !== 'admin')) {
+        alert("Access Denied! Only Receptionists can add services.");
+        window.location.href = "dashboard.html";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        loadReservations();
+        loadServices();
+    });
+
+    // 1. Load only active bookings
+    function loadReservations() {
+        fetch('https://localhost:8181/OceanViewResort/resources/reservations')
+            .then(response => response.json())
+            .then(data => {
+                const resSelect = document.getElementById("reservationId");
+                resSelect.innerHTML = '<option value="" disabled selected>Select a booking...</option>';
+                
+                // Filter to only show Checked in or Confirmed
+                const activeBookings = data.filter(r => r.reservationStatus === 'Checked in' || r.reservationStatus === 'Confirmed');
+                
+                if(activeBookings.length === 0) {
+                    resSelect.innerHTML = '<option value="" disabled selected>No active bookings found.</option>';
+                    return;
+                }
+
+                activeBookings.forEach(res => {
+                    resSelect.innerHTML += `<option value="${res.reservationId}">[${res.reservationNumber}] ${res.guestName} - Room: ${res.roomDetails}</option>`;
+                });
+            })
+            .catch(err => console.error("Error loading reservations:", err));
+    }
+
+    // 2. Load available services (Food, Spa etc.)
+    function loadServices() {
+        fetch('https://localhost:8181/OceanViewResort/resources/services')
+            .then(response => response.json())
+            .then(data => {
+                const servSelect = document.getElementById("serviceId");
+                servSelect.innerHTML = '<option value="" disabled selected>Select a service...</option>';
+                
+                if(data.length === 0) {
+                    servSelect.innerHTML = '<option value="" disabled selected>No services available.</option>';
+                    return;
+                }
+
+                data.forEach(serv => {
+                    servSelect.innerHTML += `<option value="${serv.serviceId}">${serv.serviceName} (Rs. ${serv.price})</option>`;
+                });
+            })
+            .catch(err => console.error("Error loading services:", err));
+    }
+
+    // 3. Submit the form
+    document.getElementById("addServiceForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const alertBox = document.getElementById("alertBox");
+        const submitBtn = document.getElementById("submitBtn");
+
+        const requestData = {
+            reservationId: parseInt(document.getElementById("reservationId").value),
+            serviceId: parseInt(document.getElementById("serviceId").value),
+            quantity: parseInt(document.getElementById("quantity").value),
+            addedBy: parseInt(userId)
+        };
+
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
+        submitBtn.disabled = true;
+
+        fetch("https://localhost:8181/OceanViewResort/resources/services/add-to-bill", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alertBox.className = "alert alert-success";
+                alertBox.innerHTML = `<strong>Success!</strong> ${data.message}`;
+                document.getElementById("quantity").value = 1; // reset qty
+            } else {
+                alertBox.className = "alert alert-danger";
+                alertBox.innerHTML = `<strong>Error!</strong> ${data.message}`;
+            }
+        })
+        .catch(error => {
+            alertBox.className = "alert alert-danger";
+            alertBox.innerHTML = "<strong>Error!</strong> Could not connect to the server.";
+            console.error(error);
+        })
+        .finally(() => {
+            alertBox.classList.remove("d-none");
+            submitBtn.innerHTML = '<i class="bi bi-plus-circle"></i> Add to Room Bill';
+            submitBtn.disabled = false;
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

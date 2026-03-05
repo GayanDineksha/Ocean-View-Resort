@@ -9,57 +9,51 @@ package com.mycompany.oceanviewresort.model;
  * @author User
  */
 public class ReservationDTO {
-    private int reservationId;
+
+    private long reservationId;
     private String reservationNumber;
     
-    // --- Guest Details ---
-    private int guestId;
-    private String guestName;
-    private String guestNic;
-    private String guestPhone;
-    private String guestEmail;
-    
     // --- Reservation Details ---
+    private long roomId;
     private String roomDetails; 
-    private String checkIn;
-    private String checkOut;
-    private int adults;     
-    private int children;   
-    private String status;
+    private String checkInDate;
+    private String checkOutDate;
+    private int adults;
+    private int children;
+    private String specialRequests;
+    private String reservationStatus;
+    private double roomRateAtBooking;
+    
+    // --- Guest Details (For the form) ---
+    private long guestId;
+    private String guestName;
+    private String nicPassport;
+    private String contactNumber;
+    private String email;
+    
+    // --- User who created it ---
+    private long createdBy;
 
-    public ReservationDTO() {
-    }
+    public ReservationDTO() {}
 
     // Getters and Setters
-    public int getReservationId() { return reservationId; }
-    public void setReservationId(int reservationId) { this.reservationId = reservationId; }
+    public long getReservationId() { return reservationId; }
+    public void setReservationId(long reservationId) { this.reservationId = reservationId; }
 
     public String getReservationNumber() { return reservationNumber; }
     public void setReservationNumber(String reservationNumber) { this.reservationNumber = reservationNumber; }
 
-    public int getGuestId() { return guestId; }
-    public void setGuestId(int guestId) { this.guestId = guestId; }
-
-    public String getGuestName() { return guestName; }
-    public void setGuestName(String guestName) { this.guestName = guestName; }
-
-    public String getGuestNic() { return guestNic; }
-    public void setGuestNic(String guestNic) { this.guestNic = guestNic; }
-
-    public String getGuestPhone() { return guestPhone; }
-    public void setGuestPhone(String guestPhone) { this.guestPhone = guestPhone; }
-
-    public String getGuestEmail() { return guestEmail; }
-    public void setGuestEmail(String guestEmail) { this.guestEmail = guestEmail; }
+    public long getRoomId() { return roomId; }
+    public void setRoomId(long roomId) { this.roomId = roomId; }
 
     public String getRoomDetails() { return roomDetails; }
     public void setRoomDetails(String roomDetails) { this.roomDetails = roomDetails; }
 
-    public String getCheckIn() { return checkIn; }
-    public void setCheckIn(String checkIn) { this.checkIn = checkIn; }
+    public String getCheckInDate() { return checkInDate; }
+    public void setCheckInDate(String checkInDate) { this.checkInDate = checkInDate; }
 
-    public String getCheckOut() { return checkOut; }
-    public void setCheckOut(String checkOut) { this.checkOut = checkOut; }
+    public String getCheckOutDate() { return checkOutDate; }
+    public void setCheckOutDate(String checkOutDate) { this.checkOutDate = checkOutDate; }
 
     public int getAdults() { return adults; }
     public void setAdults(int adults) { this.adults = adults; }
@@ -67,6 +61,30 @@ public class ReservationDTO {
     public int getChildren() { return children; }
     public void setChildren(int children) { this.children = children; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getSpecialRequests() { return specialRequests; }
+    public void setSpecialRequests(String specialRequests) { this.specialRequests = specialRequests; }
+
+    public String getReservationStatus() { return reservationStatus; }
+    public void setReservationStatus(String reservationStatus) { this.reservationStatus = reservationStatus; }
+
+    public double getRoomRateAtBooking() { return roomRateAtBooking; }
+    public void setRoomRateAtBooking(double roomRateAtBooking) { this.roomRateAtBooking = roomRateAtBooking; }
+
+    public long getGuestId() { return guestId; }
+    public void setGuestId(long guestId) { this.guestId = guestId; }
+
+    public String getGuestName() { return guestName; }
+    public void setGuestName(String guestName) { this.guestName = guestName; }
+
+    public String getNicPassport() { return nicPassport; }
+    public void setNicPassport(String nicPassport) { this.nicPassport = nicPassport; }
+
+    public String getContactNumber() { return contactNumber; }
+    public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public long getCreatedBy() { return createdBy; }
+    public void setCreatedBy(long createdBy) { this.createdBy = createdBy; }
 }

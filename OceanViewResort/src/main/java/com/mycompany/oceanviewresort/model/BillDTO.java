@@ -9,9 +9,9 @@ package com.mycompany.oceanviewresort.model;
  * @author User
  */
 public class BillDTO {
-    private int billId;
+    private long billId;
     private String billNumber;
-    private int reservationId;
+    private long reservationId;
     private String guestName;
     private String guestPhone; 
     private String guestEmail; 
@@ -28,12 +28,14 @@ public class BillDTO {
     private String paymentStatus;
     private String billDate;
 
-    // Getters and Setters
-    public int getBillId() { return billId; }
-    public void setBillId(int billId) { this.billId = billId; }
+    public BillDTO() {}
 
-    public int getReservationId() { return reservationId; }
-    public void setReservationId(int reservationId) { this.reservationId = reservationId; }
+    // Getters and Setters
+    public long getBillId() { return billId; }
+    public void setBillId(long billId) { this.billId = billId; }
+
+    public long getReservationId() { return reservationId; }
+    public void setReservationId(long reservationId) { this.reservationId = reservationId; }
 
     public String getBillNumber() { return billNumber; }
     public void setBillNumber(String billNumber) { this.billNumber = billNumber; }
