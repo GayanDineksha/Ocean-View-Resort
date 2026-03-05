@@ -3,7 +3,6 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
 -->
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -28,12 +27,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                 top: 0; 
                 width: 100%; 
                 margin: 0;
-                padding: 20px 40px; /* Added padding to prevent text cut-off */
+                padding: 20px 40px; 
                 box-shadow: none; 
                 border: none; 
             }
             .no-print { display: none !important; }
-            /* Auto set to portrait */
             @page {
                 size: portrait;
                 margin: 1cm;
@@ -181,7 +179,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
 
     <script>
         const userRole = sessionStorage.getItem("userRole");
-        if (!userRole || userRole.toLowerCase() !== 'receptionist') {
+        const userId = sessionStorage.getItem("userId") || 2; 
+
+        if (!userRole || (userRole.toLowerCase() !== 'receptionist' && userRole.toLowerCase() !== 'admin')) {
             alert("Access Denied! Only Receptionists can access billing.");
             window.location.href = "dashboard.html";
         }
@@ -195,7 +195,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                 .then(data => {
                     const select = document.getElementById("resSelect");
                     data.forEach(res => {
-                        if(res.status !== "Cancelled") {
+                        if(res.reservationStatus !== "Cancelled") {
                             let option = document.createElement("option");
                             option.value = res.reservationId;
                             option.text = `${res.guestName} (${res.reservationNumber})`;
@@ -297,7 +297,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             fetch(`https://localhost:8181/OceanViewResort/resources/billing/pay`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ billId: currentBillId, method: method, amount: amount, reference: ref })
+                body: JSON.stringify({ 
+                    billId: currentBillId, 
+                    method: method, 
+                    amount: amount, 
+                    reference: ref,
+                    userId: parseInt(userId) 
+                })
             })
             .then(res => res.json())
             .then(data => {
