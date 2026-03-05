@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Help — Ocean View Resort</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --sand:#f0e8d8;--sand-light:#f8f3eb;--sand-bg:#f3ede3;
+    --ocean:#1a3a4a;--ocean-deep:#0d2433;--ocean-mid:#2a5568;
+    --gold:#c9a96e;--gold-light:#e8c99a;--white:#ffffff;
+  }
+  body{font-family:'Jost',sans-serif;background:var(--sand-bg);color:var(--ocean-deep);min-height:100vh;}
+
+  /* top nav bar */
+  .topnav{
+    background:var(--ocean-deep);padding:0 40px;height:62px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .topnav-brand{
+    font-family:'Cormorant Garamond',serif;font-size:1.05rem;
+    font-weight:300;letter-spacing:0.2em;text-transform:uppercase;color:var(--sand);
+  }
+  .topnav-links{display:flex;align-items:center;gap:8px;}
+  .topnav-links a{
+    font-size:0.75rem;font-weight:300;color:rgba(240,232,216,.55);
+    text-decoration:none;padding:8px 14px;border-radius:8px;transition:all .2s;
+  }
+  .topnav-links a:hover{color:var(--sand);background:rgba(255,255,255,.07);}
+  .topnav-links a.active{color:var(--gold);background:rgba(201,169,110,.12);}
+
+  /* hero */
+  .help-hero{
+    background:var(--ocean-deep);padding:56px 40px 52px;
+    text-align:center;position:relative;overflow:hidden;
+  }
+  .help-hero::before{
+    content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);
+    width:500px;height:500px;border-radius:50%;
+    border:1px solid rgba(201,169,110,.1);pointer-events:none;
+  }
+  .help-eyebrow{
+    font-size:0.68rem;letter-spacing:0.28em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:16px;display:block;
+  }
+  .help-hero h1{
+    font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3.5rem);
+    font-weight:300;color:var(--white);margin-bottom:14px;
+  }
+  .help-hero p{
+    font-size:0.88rem;font-weight:300;color:rgba(240,232,216,.55);
+    max-width:480px;margin:0 auto;line-height:1.8;
+  }
+
+  /* search */
+  .search-wrap{
+    max-width:480px;margin:32px auto 0;position:relative;
+  }
+  .search-wrap input{
+    width:100%;padding:14px 20px 14px 48px;
+    border-radius:50px;border:none;background:rgba(255,255,255,.08);
+    backdrop-filter:blur(10px);
+    font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:300;
+    color:var(--white);outline:none;
+    transition:background .2s;
+  }
+  .search-wrap input::placeholder{color:rgba(240,232,216,.4);}
+  .search-wrap input:focus{background:rgba(255,255,255,.14);}
+  .search-icon{
+    position:absolute;left:18px;top:50%;transform:translateY(-50%);
+    stroke:rgba(240,232,216,.4);fill:none;stroke-width:1.8;
+    width:16px;height:16px;pointer-events:none;
+  }
+
+  /* content */
+  .help-content{max-width:900px;margin:0 auto;padding:48px 32px 80px;}
+
+  /* category tabs */
+  .category-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px;}
+  .cat-tab{
+    padding:8px 20px;border-radius:50px;border:1.5px solid rgba(26,58,74,.14);
+    font-size:0.75rem;font-weight:400;letter-spacing:0.05em;
+    cursor:pointer;background:none;color:#7a8a94;transition:all .2s;
+  }
+  .cat-tab.active{background:var(--ocean-deep);border-color:var(--ocean-deep);color:var(--sand);}
+  .cat-tab:hover:not(.active){background:rgba(201,169,110,.1);border-color:var(--gold);color:var(--ocean);}
+
+  /* accordion */
+  .section-title{
+    font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;
+    color:var(--ocean-deep);margin-bottom:16px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .section-title::after{content:'';flex:1;height:1px;background:rgba(26,58,74,.1);}
+
+  .faq-item{
+    background:var(--white);border-radius:12px;margin-bottom:10px;
+    border:1px solid rgba(26,58,74,.07);overflow:hidden;
+  }
+  .faq-q{
+    width:100%;display:flex;align-items:center;justify-content:space-between;
+    padding:18px 22px;background:none;border:none;cursor:pointer;
+    text-align:left;
+    font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:400;
+    color:var(--ocean-deep);gap:12px;transition:background .15s;
+  }
+  .faq-q:hover{background:rgba(240,232,216,.3);}
+  .faq-chevron{
+    width:16px;height:16px;stroke:var(--gold);fill:none;stroke-width:2;
+    flex-shrink:0;transition:transform .25s;
+  }
+  .faq-item.open .faq-chevron{transform:rotate(180deg);}
+  .faq-a{
+    display:none;padding:0 22px 18px;
+    font-size:0.82rem;font-weight:300;line-height:1.8;color:#6b8090;
+  }
+  .faq-item.open .faq-a{display:block;}
+
+  /* quick guide cards */
+  .guide-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px;}
+  .guide-card{
+    background:var(--white);border-radius:14px;padding:24px;
+    border:1px solid rgba(26,58,74,.07);
+    transition:transform .2s,box-shadow .2s;
+  }
+  .guide-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(13,36,51,.07);}
+  .guide-num{
+    font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;
+    color:rgba(201,169,110,.4);line-height:1;margin-bottom:14px;display:block;
+  }
+  .guide-card h4{font-size:0.88rem;font-weight:500;color:var(--ocean-deep);margin-bottom:8px;}
+  .guide-card p{font-size:0.78rem;font-weight:300;line-height:1.7;color:#8fa0ac;}
+
+  /* contact strip */
+  .contact-strip{
+    background:var(--ocean-deep);border-radius:16px;padding:32px 36px;
+    display:flex;align-items:center;justify-content:space-between;
+    margin-top:48px;
+  }
+  .contact-strip h3{
+    font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--white);
+    margin-bottom:4px;
+  }
+  .contact-strip p{font-size:0.78rem;font-weight:300;color:rgba(240,232,216,.5);}
+  .contact-btn{
+    padding:12px 28px;background:var(--gold);color:var(--ocean-deep);
+    border:none;border-radius:50px;cursor:pointer;
+    font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;
+    letter-spacing:0.06em;white-space:nowrap;transition:background .2s;
+  }
+  .contact-btn:hover{background:var(--gold-light);}
+
+  @media(max-width:700px){
+    .guide-grid{grid-template-columns:1fr;}
+    .contact-strip{flex-direction:column;gap:20px;text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">Ocean View Resort</span>
+  <div class="topnav-links">
+    <a href="home.html">Home</a>
+    <a href="help.html" class="active">Help</a>
+    <a href="login.html">Login</a>
+  </div>
+</nav>
+
+<div class="help-hero">
+  <span class="help-eyebrow">Staff Guide</span>
+  <h1>How can we help you?</h1>
+  <p>Everything you need to know about using the Ocean View Resort reservation management system.</p>
+  <div class="search-wrap">
+    <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search for help topics…" id="searchInput" oninput="filterFaqs(this.value)">
+  </div>
+</div>
+
+<div class="help-content">
+
+  <div class="category-tabs">
+    <button class="cat-tab active" onclick="filterCategory('all',this)">All Topics</button>
+    <button class="cat-tab" onclick="filterCategory('login',this)">Login & Access</button>
+    <button class="cat-tab" onclick="filterCategory('reservation',this)">Reservations</button>
+    <button class="cat-tab" onclick="filterCategory('billing',this)">Billing</button>
+    <button class="cat-tab" onclick="filterCategory('system',this)">System</button>
+  </div>
+
+  <p class="section-title">Quick Start Guide</p>
+  <div class="guide-grid">
+    <div class="guide-card">
+      <span class="guide-num">01</span>
+      <h4>Login to the System</h4>
+      <p>Navigate to the login page and enter your assigned staff credentials provided by the IT department.</p>
+    </div>
+    <div class="guide-card">
+      <span class="guide-num">02</span>
+      <h4>Add a Reservation</h4>
+      <p>Click "New Reservation" on the dashboard or sidebar. Fill in the guest name, room type, and dates. Click Save.</p>
+    </div>
+    <div class="guide-card">
+      <span class="guide-num">03</span>
+      <h4>Generate a Bill</h4>
+      <p>Search for a reservation, open the detail view, and click "Generate Bill" to compute total stay cost automatically.</p>
+    </div>
+  </div>
+
+  <p class="section-title" style="margin-top:8px">Frequently Asked Questions</p>
+  <div id="faqContainer"></div>
+
+  <div class="contact-strip">
+    <div>
+      <h3>Still need help?</h3>
+      <p>Contact the IT support desk or your module supervisor for further assistance.</p>
+    </div>
+    <button class="contact-btn">Contact Support</button>
+  </div>
+
+</div>
+
+<script>
+  const faqs = [
+    { cat:'login', q:'How do I log in to the system?', a:'Go to the Login page and enter your unique username and password provided by the System Administrator. Click "Sign In" to proceed to your authorized dashboard.' },
+    { cat:'login', q:'What if I forget my password?', a:'Contact your system administrator or IT support at the resort. They can reset your credentials. Ensure you never share your password with other staff members.' },
+    { cat:'login', q:'Can multiple staff members use the same account?', a:'No. Each staff member should have their own account for accountability and audit trail purposes. Contact your Admin to get individual login credentials created.' },
+    { cat:'system', q:'What are the different user roles in the system?', a:'There are 3 roles: <b>Admin</b> (Manages users, rooms, and audit logs), <b>Manager</b> (Manages room pricing, services, global discounts, and views reports), and <b>Receptionist</b> (Handles daily bookings, check-ins, posting charges, and billing).' },
+    { cat:'reservation', q:'How do I add a new guest reservation?', a:'From the dashboard, click the "+ New Reservation" button in the top right of the reservations table, or use the Quick Actions panel on the right side. Fill in the reservation number, guest name, address, contact, room type, and check-in/check-out dates, then click Save.' },
+    { cat:'reservation', q:'How do I search for an existing reservation?', a:'Use the "Search Reservation" quick action button on the dashboard. You can search by reservation number, guest name, or contact number.' },
+    { cat:'reservation', q:'What room types are available?', a:'Room types and their pricing are dynamic and managed by the Manager. Standard types usually include Deluxe Ocean View, Standard Garden, and Family Suite. Check the "Room Pricing" module for current details.' },
+    { cat:'reservation', q:'Can I edit a reservation after saving?', a:'Yes. Open the reservation details by clicking the edit icon in the reservations table. From there you can update check-in/check-out dates and room type. All changes are securely logged in the system audit.' },
+    { cat:'billing', q:'How is the total bill calculated?', a:'The system automatically calculates the total cost based on the number of nights (check-out minus check-in) multiplied by the room\'s nightly rate at the time of booking. Additional service charges (Food, Spa, Laundry) and taxes are automatically added.' },
+    { cat:'billing', q:'How do I apply a special discount?', a:'Only users with the Manager role can override the default discount. Managers must navigate to "Special Discounts", enter the bill number, specify the new discount amount, and provide a valid reason which will be recorded in the audit logs.' },
+    { cat:'billing', q:'How do I print or export a bill?', a:'Open the reservation, click "Generate Bill" (or view existing bill), and use the Print button on the bill preview. You can also export as PDF for email delivery to the guest.' },
+    { cat:'system', q:'What browsers does the system support?', a:'The system works best on modern browsers: Google Chrome, Mozilla Firefox, Microsoft Edge, and Safari. Internet Explorer is not supported.' },
+    { cat:'system', q:'Is the data saved automatically?', a:'Yes. When you click "Save" the data is stored securely in the database immediately. However, always ensure you receive a success message before navigating away.' },
+    { cat:'system', q:'What does each reservation status mean?', a:'<b>Pending:</b> Booking recorded but awaiting confirmation. <b>Confirmed:</b> Confirmed but guest not yet arrived. <b>Checked In:</b> Guest is in the hotel. <b>Checked Out:</b> Stay is complete. <b>Cancelled:</b> Booking cancelled prior to arrival. <b>No Show:</b> Guest did not arrive on the check-in date.' },
+  ];
+
+  let activeCategory = 'all';
+  let searchTerm = '';
+
+  function renderFaqs() {
+    const container = document.getElementById('faqContainer');
+    const filtered = faqs.filter(f => {
+      const matchCat = activeCategory === 'all' || f.cat === activeCategory;
+      const matchSearch = !searchTerm || f.q.toLowerCase().includes(searchTerm) || f.a.toLowerCase().includes(searchTerm);
+      return matchCat && matchSearch;
+    });
+    if (!filtered.length) {
+      container.innerHTML = '<p style="text-align:center;color:#9aabba;padding:40px 0;font-size:.85rem;">No results found. Try a different search term.</p>';
+      return;
+    }
+    container.innerHTML = filtered.map((f,i) => `
+      <div class="faq-item" id="faq-${i}">
+        <button class="faq-q" onclick="toggleFaq('faq-${i}')">
+          ${f.q}
+          <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">${f.a}</div>
+      </div>
+    `).join('');
+  }
+
+  function toggleFaq(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+  }
+
+  function filterCategory(cat, btn) {
+    activeCategory = cat;
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderFaqs();
+  }
+
+  function filterFaqs(val) {
+    searchTerm = val.toLowerCase();
+    renderFaqs();
+  }
+
+  renderFaqs();
+</script>
+</body>
+</html>

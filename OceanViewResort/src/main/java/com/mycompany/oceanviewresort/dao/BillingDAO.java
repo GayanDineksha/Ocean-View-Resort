@@ -1,12 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.oceanviewresort.dao;
 
 import com.mycompany.oceanviewresort.model.BillDTO;
 import com.mycompany.oceanviewresort.util.DB;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author User
@@ -83,5 +82,64 @@ public class BillingDAO {
             cs.execute();
             return true;
         } catch (Exception e) { return false; }
+    }
+    
+    // --- [අලුතින් එකතු කළ කොටස: Outstanding Bills ගැනීම] ---
+    public List<BillDTO> getOutstandingBills() {
+        List<BillDTO> list = new ArrayList<>();
+        String query = "SELECT bill_id, bill_number, reservation_number, guest_name, total_amount, balance_due FROM vw_outstanding_bills";
+        try (Connection con = DB.getConnection();
+             PreparedStatement ps = con.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                BillDTO b = new BillDTO();
+                b.setBillId(rs.getLong("bill_id"));
+                b.setBillNumber(rs.getString("bill_number"));
+                b.setReservationNumber(rs.getString("reservation_number"));
+                b.setGuestName(rs.getString("guest_name"));
+                b.setTotalAmount(rs.getDouble("total_amount"));
+                b.setBalanceDue(rs.getDouble("balance_due"));
+                list.add(b);
+            }
+        } catch(Exception e) { e.printStackTrace(); }
+        return list;
+    }
+
+    // --- [අලුතින් එකතු කළ කොටස: Special Discount එක දාන එක] ---
+    public boolean applySpecialDiscount(long billId, double discountAmount, String reason, long managerId) {
+        String updateBill = "UPDATE bills SET discount_amount = ? WHERE bill_id = ?";
+        String auditLog = "INSERT INTO audit_logs (user_id, action_type, table_name, record_id, new_values) VALUES (?, 'UPDATE', 'bills', ?, ?)";
+
+        try (Connection con = DB.getConnection()) {
+            con.setAutoCommit(false); // Transaction Start
+            
+            try (PreparedStatement ps1 = con.prepareStatement(updateBill);
+                 PreparedStatement ps2 = con.prepareStatement(auditLog)) {
+
+                // 1. Update Discount in Bills table
+                ps1.setDouble(1, discountAmount);
+                ps1.setLong(2, billId);
+                ps1.executeUpdate();
+
+                // 2. Create Audit Log with the Reason
+                ps2.setLong(1, managerId);
+                ps2.setLong(2, billId);
+                org.json.JSONObject newVals = new org.json.JSONObject();
+                newVals.put("discount_amount", discountAmount);
+                newVals.put("discount_reason", reason); // හේතුව මෙතනින් සේව් වෙනවා!
+                ps2.setString(3, newVals.toString());
+                ps2.executeUpdate();
+
+                con.commit(); // Transaction Success
+                return true;
+            } catch (Exception e) {
+                con.rollback();
+                e.printStackTrace();
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

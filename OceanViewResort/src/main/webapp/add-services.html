@@ -3,101 +3,603 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
 -->
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Services - Ocean View Resort</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <title>Add Extra Services - Ocean View Resort</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #f4f7f6; }
-        .card { border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: none; }
-        .topbar { background: white; padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            /* BASE COLORS */
+            --sand: #f0e8d8;
+            --sand-light: #f8f3eb;
+            --sand-bg: #f3ede3;
+            --ocean: #1a3a4a;
+            --ocean-deep: #0d2433;
+            --ocean-mid: #2a5568;
+            --gold: #c9a96e;
+            --gold-light: #e8c99a;
+            --white: #ffffff;
+            --sidebar-w: 240px;
+            --success: #3d9970;
+            --warn: #e8a838;
+            --info: #3a85c9;
+            --danger: #e05c5c;
+
+            /* LIGHT THEME */
+            --bg-page: var(--sand-bg);
+            --bg-topbar: var(--white);
+            --bg-card: var(--white);
+            --text-main: var(--ocean-deep);
+            --text-muted: #8fa0ac;
+            --border-color: rgba(26,58,74,.08);
+            --sidebar-bg: var(--ocean-deep);
+            --input-bg: var(--white);
+            --input-border: rgba(26,58,74,.14);
+            --label-color: #6b8090;
+        }
+
+        /* DARK THEME */
+        [data-theme="dark"] {
+            --bg-page: #121a21;
+            --bg-topbar: #1a2630;
+            --bg-card: #1a2630;
+            --text-main: #e0e6ed;
+            --text-muted: #a0b1bc;
+            --border-color: rgba(255,255,255,0.08);
+            --sidebar-bg: #0b151c;
+            --input-bg: #1f2f3d;
+            --input-border: rgba(255,255,255,0.1);
+            --label-color: #8fa0ac;
+        }
+
+        html, body { height: 100%; transition: background 0.3s, color 0.3s; }
+        body {
+            font-family: 'Jost', sans-serif;
+            background: var(--bg-page);
+            color: var(--text-main);
+            display: flex;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* ═══════════════════
+            SIDEBAR (Font sizes updated)
+        ═══════════════════ */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--sidebar-bg);
+            display: flex; flex-direction: column;
+            height: 100vh; flex-shrink: 0;
+            position: fixed; left: 0; top: 0;
+            z-index: 50; overflow-y: auto;
+            transition: background 0.3s;
+        }
+
+        .sidebar-logo {
+            padding: 26px 22px 20px;
+            border-bottom: 1px solid rgba(240,232,216,.07);
+            flex-shrink: 0;
+        }
+        .sidebar-logo-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem; /* LARGED */
+            font-weight: 300;
+            letter-spacing: 0.18em; text-transform: uppercase;
+            color: var(--sand); display: block; line-height: 1.35;
+        }
+        .sidebar-logo-sub {
+            font-size: 0.7rem; font-weight: 300;
+            letter-spacing: 0.18em; text-transform: uppercase;
+            color: var(--gold); margin-top: 3px; display: block;
+        }
+
+        .nav-section { padding: 18px 12px 10px; flex: 1; }
+
+        .nav-label {
+            font-size: 0.75rem; /* LARGED */
+            font-weight: 500;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: rgba(201,169,110,.45);
+            padding: 0 10px; margin-bottom: 6px; display: block;
+        }
+        .nav-label:not(:first-child) { margin-top: 20px; }
+
+        .sidebar a {
+            align-items: center; gap: 11px;
+            padding: 12px 12px; border-radius: 9px; margin-bottom: 2px;
+            text-decoration: none;
+            color: rgba(240,232,216,.5);
+            font-size: 1.1rem; /* LARGED */
+            font-weight: 300; letter-spacing: 0.02em;
+            transition: all .2s; border-left: none;
+            display: none; /* Security hiding */
+        }
+        .sidebar a:hover { background: rgba(240,232,216,.07); color: var(--sand); }
+        .sidebar a.active-link { background: rgba(201,169,110,.14); color: var(--gold-light); }
+        .sidebar a .nav-icon {
+            width: 18px; height: 18px;
+            stroke: currentColor; fill: none;
+            stroke-width: 1.7; flex-shrink: 0;
+        }
+
+        .show-feature { display: flex !important; }
+        .show-block   { display: block !important; }
+
+        .sidebar-footer {
+            padding: 16px 22px;
+            border-top: 1px solid rgba(240,232,216,.07);
+            flex-shrink: 0;
+        }
+        .user-chip { display: flex; align-items: center; gap: 10px; }
+        .user-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: rgba(201,169,110,.18);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem; color: var(--gold); flex-shrink: 0;
+        }
+        .user-name { font-size: 0.9rem; font-weight: 300; color: var(--sand); display: block; }
+        .user-role { font-size: 0.7rem; font-weight: 300; color: rgba(240,232,216,.38); letter-spacing: 0.05em; }
+
+        /* ═══════════════════
+            MAIN CONTENT
+        ═══════════════════ */
+        .main-content {
+            margin-left: var(--sidebar-w);
+            width: calc(100% - var(--sidebar-w));
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            background: var(--bg-topbar);
+            height: 70px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 30px;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .topbar-left { display: flex; align-items: center; gap: 14px; }
+
+        .back-btn {
+            display: flex; align-items: center; gap: 7px;
+            padding: 8px 16px; border-radius: 8px;
+            border: 1.5px solid var(--border-color);
+            background: none; cursor: pointer;
+            font-family: 'Jost', sans-serif;
+            font-size: 0.95rem; font-weight: 400; /* LARGED */
+            color: var(--text-muted); transition: all .2s;
+            text-decoration: none;
+        }
+        .back-btn:hover { border-color: var(--gold); color: var(--gold); }
+        .back-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+        #pageTitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem; font-weight: 400; /* LARGED */
+            color: var(--text-main); margin: 0;
+        }
+
+        .topbar-right { display: flex; align-items: center; gap: 18px; }
+        .topbar-user { text-align: right; }
+        #welcomeUser { display: block; font-size: 1.1rem; font-weight: 400; color: var(--text-main); }
+        #userRoleBadge {
+            display: inline-block; margin-top: 2px;
+            font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em;
+            text-transform: uppercase; padding: 2px 9px; border-radius: 20px;
+            background: rgba(201,169,110,.15); color: var(--gold);
+        }
+
+        .theme-btn {
+            background: rgba(138,154,168,0.1);
+            border: 1px solid var(--border-color); cursor: pointer;
+            color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; border-radius: 50%; transition: all .2s;
+        }
+        .theme-btn:hover { background: rgba(138,154,168,0.2); }
+        .theme-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        .logout-btn {
+            display: flex; align-items: center; gap: 7px;
+            padding: 10px 18px; border-radius: 8px;
+            border: 1.5px solid rgba(224,92,92,.25);
+            background: none; cursor: pointer;
+            font-family: 'Jost', sans-serif;
+            font-size: 0.9rem; font-weight: 400; letter-spacing: 0.06em;
+            color: var(--danger); transition: all .2s;
+        }
+        .logout-btn:hover { background: rgba(224,92,92,.08); border-color: var(--danger); }
+        .logout-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+        /* ═══════════════════
+            CONTENT AREA
+        ═══════════════════ */
+        .content { flex: 1; overflow-y: auto; padding: 35px 40px; }
+
+        .page-header { margin-bottom: 30px; }
+        .page-header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.4rem; font-weight: 400; /* LARGED */
+            color: var(--text-main); margin-bottom: 4px; margin-top: 0;
+        }
+        .page-header h2 span { color: var(--gold); font-style: italic; }
+        .page-header p { font-size: 1.0rem; font-weight: 300; color: var(--text-muted); margin:0;}
+
+        /* ═══════════════════
+            FORM CARD
+        ═══════════════════ */
+        .form-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            padding: 36px 40px;
+            max-width: 680px;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .form-section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem; font-weight: 400; /* LARGED */
+            color: var(--text-main);
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 28px;
+            display: flex; align-items: center; gap: 10px;
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .form-section-title svg {
+            width: 22px; height: 22px;
+            stroke: var(--gold); fill: none; stroke-width: 1.8;
+        }
+
+        /* ALERT BOX */
+        #alertBox {
+            display: none;
+            align-items: flex-start; gap: 12px;
+            padding: 15px 18px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            font-size: 0.95rem; font-weight: 400; line-height: 1.5; /* LARGED */
+        }
+        #alertBox.visible { display: flex; }
+        #alertBox.success {
+            background: rgba(61,153,112,.1);
+            border: 1px solid rgba(61,153,112,.25);
+            color: var(--success);
+        }
+        #alertBox.error {
+            background: rgba(224,92,92,.08);
+            border: 1px solid rgba(224,92,92,.2);
+            color: var(--danger);
+        }
+        #alertBox svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; margin-top: 1px; }
+
+        /* FORM FIELDS */
+        .field-group { margin-bottom: 24px; }
+        .field-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; margin-bottom: 24px; }
+        .field-row .qty-col { width: 120px; }
+
+        .field-label {
+            display: block; font-size: 0.85rem; font-weight: 500; /* LARGED */
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--label-color); margin-bottom: 8px;
+            transition: color 0.3s;
+        }
+        .field-hint {
+            display: block; font-size: 0.8rem; font-weight: 300;
+            color: var(--text-muted); margin-top: 6px;
+        }
+
+        select.f-input,
+        input.f-input {
+            width: 100%; padding: 13px 16px;
+            border: 1.5px solid var(--input-border);
+            border-radius: 10px;
+            background: var(--input-bg);
+            font-family: 'Jost', sans-serif;
+            font-size: 1.05rem; font-weight: 300; /* LARGED */
+            color: var(--text-main);
+            outline: none;
+            transition: border-color .2s, box-shadow .2s, background 0.3s, color 0.3s;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+        select.f-input:focus,
+        input.f-input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201,169,110,.12);
+        }
+
+        /* SUBMIT BUTTON */
+        #submitBtn {
+            width: 100%; padding: 15px;
+            background: var(--ocean-deep); color: var(--sand);
+            border: none; border-radius: 10px; cursor: pointer;
+            font-family: 'Jost', sans-serif;
+            font-size: 1.05rem; font-weight: 400; /* LARGED */
+            letter-spacing: 0.1em; text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-top: 8px;
+            transition: background .25s, transform .15s, box-shadow .25s;
+        }
+        #submitBtn:hover:not(:disabled) {
+            background: var(--ocean);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(13,36,51,.2);
+        }
+        #submitBtn:disabled { opacity: .65; cursor: not-allowed; transform: none !important; }
+        #submitBtn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+        .spinner {
+            width: 16px; height: 16px;
+            border: 2px solid rgba(240,232,216,.3);
+            border-top-color: var(--gold-light);
+            border-radius: 50%;
+            animation: spin .6s linear infinite;
+            display: none; flex-shrink: 0;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            body { overflow: auto; height: auto; }
+            .sidebar { position: relative; width: 100%; height: auto; display: block; }
+            .main-content { margin-left: 0; width: 100%; }
+            .form-card { padding: 24px 20px; }
+            .field-row { grid-template-columns: 1fr; }
+            .field-row .qty-col { width: 100%; }
+        }
     </style>
 </head>
 <body>
 
-<div class="topbar d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h4 class="mb-0 fw-bold text-primary"><i class="bi bi-cart-plus"></i> Add Extra Services</h4>
-        <small class="text-muted">Post food, spa, or laundry charges to a guest's room bill.</small>
+<div class="sidebar">
+    <div class="sidebar-logo">
+        <span class="sidebar-logo-name">Ocean View<br>Resort</span>
+        <span class="sidebar-logo-sub">Staff Portal</span>
     </div>
-    <div>
-        <button class="btn btn-outline-secondary" onclick="window.location.href='dashboard.html'"><i class="bi bi-arrow-left"></i> Back to Dashboard</button>
+
+    <div class="nav-section">
+        <span class="nav-label">Main</span>
+        <a href="dashboard.html" class="show-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Dashboard
+        </a>
+
+        <span class="nav-label receptionist-feature" style="display:none;">Reservations</span>
+        <a href="create-reservation.html" class="receptionist-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            New Reservation
+        </a>
+        <a href="manage-bookings.html" class="receptionist-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Manage Bookings
+        </a>
+        <a href="add-services.html" class="receptionist-feature active-link">
+            <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            Post Charges
+        </a>
+        <a href="billing.html" class="receptionist-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>
+            Billing &amp; Payments
+        </a>
+
+        <span class="nav-label manager-feature" style="display:none;">Management</span>
+        <a href="manage-room-types.html" class="manager-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            Room Pricing
+        </a>
+        <a href="manage-services.html" class="manager-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            Manage Services
+        </a>
+        <a href="reports.html" class="manager-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Business Reports
+        </a>
+        <a href="apply-special-discount.html" class="manager-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+            Special Discounts
+        </a>
+        <a href="manage-taxes.html" class="manager-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+            Tax &amp; Discounts
+        </a>
+
+        <span class="nav-label admin-feature" style="display:none;">Admin</span>
+        <a href="manage-users.html" class="admin-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Manage Users
+        </a>
+        <a href="manage-rooms.html" class="admin-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Manage Rooms
+        </a>
+        <a href="archive-guests.html" class="admin-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+            Archive Guests
+        </a>
+        <a href="view-audit-logs.html" class="admin-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Audit Logs
+        </a>
+
+        <span class="nav-label" style="margin-top:20px">System</span>
+        <a href="home.html" class="show-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            Home
+        </a>
+        <a href="help.html" class="show-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+            Help
+        </a>
     </div>
-</div>
 
-<div class="container mt-4 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card p-4">
-                <div id="alertBox" class="alert d-none" role="alert"></div>
-
-                <form id="addServiceForm">
-                    <h5 class="mb-4 text-primary border-bottom pb-2">Service Details</h5>
-                    
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Select Active Booking</label>
-                        <select class="form-select" id="reservationId" required>
-                            <option value="" disabled selected>Loading bookings...</option>
-                        </select>
-                        <small class="text-muted">Only Checked-in or Confirmed bookings are shown.</small>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-8">
-                            <label class="form-label fw-bold">Select Service</label>
-                            <select class="form-select" id="serviceId" required>
-                                <option value="" disabled selected>Loading services...</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold">Quantity</label>
-                            <input type="number" class="form-control" id="quantity" min="1" value="1" required>
-                        </div>
-                    </div>
-
-                    <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-success btn-lg fw-bold" id="submitBtn"><i class="bi bi-plus-circle"></i> Add to Room Bill</button>
-                    </div>
-                </form>
+    <div class="sidebar-footer">
+        <div class="user-chip">
+            <div class="user-avatar" id="sidebarAvatar">U</div>
+            <div>
+                <span class="user-name" id="sidebarUserName">Loading…</span>
+                <span class="user-role" id="sidebarUserRole">—</span>
             </div>
         </div>
     </div>
 </div>
 
+<div class="main-content">
+    
+    <div class="topbar">
+        <div class="topbar-left">
+            <a href="dashboard.html" class="back-btn">
+                <svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg>
+                Dashboard
+            </a>
+            <div class="topbar-title">
+                <h5 id="pageTitle">Post Charges</h5>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Dark Mode">
+                <svg id="themeIcon" viewBox="0 0 24 24">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+            <div class="topbar-user">
+                <span id="welcomeUser">Loading...</span>
+                <span id="userRoleBadge">Role</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="page-header">
+            <h2>Add Extra <span>Services</span></h2>
+            <p>Post food, spa, or laundry charges to a guest's room bill.</p>
+        </div>
+
+        <div class="form-card">
+            
+            <div id="alertBox">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+                <span id="alertMsg"></span>
+            </div>
+
+            <form id="addServiceForm">
+                <div class="form-section-title">
+                    <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    Service Details
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="reservationId">Select Active Booking</label>
+                    <select class="f-input" id="reservationId" required>
+                        <option value="" disabled selected>Loading bookings...</option>
+                    </select>
+                    <span class="field-hint">Only Checked-in or Confirmed bookings are shown.</span>
+                </div>
+
+                <div class="field-row">
+                    <div>
+                        <label class="field-label" for="serviceId">Select Service</label>
+                        <select class="f-input" id="serviceId" required>
+                            <option value="" disabled selected>Loading services...</option>
+                        </select>
+                    </div>
+                    <div class="qty-col">
+                        <label class="field-label" for="quantity">Quantity</label>
+                        <input type="number" class="f-input" id="quantity" min="1" value="1" required>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn">
+                    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                    <span id="btnLabel">Add to Room Bill</span>
+                    <span class="spinner" id="btnSpinner"></span>
+                </button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Security Check
+    // ─── Theme Logic ───
+    function applyTheme(theme) {
+        document.body.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+        const icon = document.getElementById("themeIcon");
+        if (theme === "dark") {
+            icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+        } else {
+            icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+        }
+    }
+    function toggleTheme() {
+        const current = document.body.getAttribute("data-theme") || "light";
+        applyTheme(current === "dark" ? "light" : "dark");
+    }
+    applyTheme(localStorage.getItem("theme") || "light");
+
+    // ─── Security Check & Sidebar Logic ───
     const userRole = sessionStorage.getItem("userRole");
-    const userId = sessionStorage.getItem("userId") || 2; 
+    const userId   = sessionStorage.getItem("userId") || 2;
 
     if (!userRole || (userRole.toLowerCase() !== 'receptionist' && userRole.toLowerCase() !== 'admin')) {
         alert("Access Denied! Only Receptionists can add services.");
         window.location.href = "dashboard.html";
     }
 
+    const currentUser = sessionStorage.getItem("loggedInUser") || "User";
+    document.getElementById("welcomeUser").innerText   = currentUser;
+    document.getElementById("userRoleBadge").innerText = userRole || "—";
+    document.getElementById("sidebarUserName").innerText = currentUser;
+    document.getElementById("sidebarUserRole").innerText = userRole || "—";
+    document.getElementById("sidebarAvatar").innerText   = currentUser.charAt(0).toUpperCase();
+
+    const role = (userRole || "").toLowerCase();
+    if (role === 'admin') {
+        document.querySelectorAll('.admin-feature').forEach(el => { el.classList.add(el.tagName.toLowerCase() === 'div' ? 'show-block' : 'show-feature'); });
+    } else if (role === 'receptionist') {
+        document.querySelectorAll('.receptionist-feature').forEach(el => { el.classList.add(el.tagName.toLowerCase() === 'div' ? 'show-block' : 'show-feature'); });
+    } else if (role === 'manager') {
+        document.querySelectorAll('.manager-feature').forEach(el => { el.classList.add(el.tagName.toLowerCase() === 'div' ? 'show-block' : 'show-feature'); });
+    }
+
+    function logout() {
+        sessionStorage.clear();
+        window.location.href = "login.html";
+    }
+
+    // ─── Core Functionality ───
     document.addEventListener("DOMContentLoaded", () => {
         loadReservations();
         loadServices();
     });
 
-    // 1. Load only active bookings
     function loadReservations() {
         fetch('https://localhost:8181/OceanViewResort/resources/reservations')
             .then(response => response.json())
             .then(data => {
                 const resSelect = document.getElementById("reservationId");
                 resSelect.innerHTML = '<option value="" disabled selected>Select a booking...</option>';
-                
-                // Filter to only show Checked in or Confirmed
                 const activeBookings = data.filter(r => r.reservationStatus === 'Checked in' || r.reservationStatus === 'Confirmed');
                 
-                if(activeBookings.length === 0) {
+                if (activeBookings.length === 0) {
                     resSelect.innerHTML = '<option value="" disabled selected>No active bookings found.</option>';
                     return;
                 }
-
                 activeBookings.forEach(res => {
                     resSelect.innerHTML += `<option value="${res.reservationId}">[${res.reservationNumber}] ${res.guestName} - Room: ${res.roomDetails}</option>`;
                 });
@@ -105,20 +607,17 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             .catch(err => console.error("Error loading reservations:", err));
     }
 
-    // 2. Load available services (Food, Spa etc.)
-    // 2. Load available services (Food, Spa etc.)
     function loadServices() {
-        fetch('https://localhost:8181/OceanViewResort/resources/services/active') 
+        fetch('https://localhost:8181/OceanViewResort/resources/services/active')
             .then(response => response.json())
             .then(data => {
                 const servSelect = document.getElementById("serviceId");
                 servSelect.innerHTML = '<option value="" disabled selected>Select a service...</option>';
                 
-                if(data.length === 0) {
+                if (data.length === 0) {
                     servSelect.innerHTML = '<option value="" disabled selected>No services available.</option>';
                     return;
                 }
-
                 data.forEach(serv => {
                     servSelect.innerHTML += `<option value="${serv.serviceId}">${serv.serviceName} (Rs. ${serv.price})</option>`;
                 });
@@ -126,22 +625,24 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             .catch(err => console.error("Error loading services:", err));
     }
 
-    // 3. Submit the form
-    document.getElementById("addServiceForm").addEventListener("submit", function(event) {
+    document.getElementById("addServiceForm").addEventListener("submit", function (event) {
         event.preventDefault();
 
-        const alertBox = document.getElementById("alertBox");
+        const alertBox  = document.getElementById("alertBox");
+        const alertMsg  = document.getElementById("alertMsg");
         const submitBtn = document.getElementById("submitBtn");
 
         const requestData = {
             reservationId: parseInt(document.getElementById("reservationId").value),
-            serviceId: parseInt(document.getElementById("serviceId").value),
-            quantity: parseInt(document.getElementById("quantity").value),
-            addedBy: parseInt(userId)
+            serviceId:     parseInt(document.getElementById("serviceId").value),
+            quantity:      parseInt(document.getElementById("quantity").value),
+            addedBy:       parseInt(userId)
         };
 
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
+        document.getElementById("btnLabel").textContent    = "Processing...";
+        document.getElementById("btnSpinner").style.display = "block";
         submitBtn.disabled = true;
+        alertBox.classList.remove("visible", "success", "error");
 
         fetch("https://localhost:8181/OceanViewResort/resources/services/add-to-bill", {
             method: "POST",
@@ -151,27 +652,26 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                alertBox.className = "alert alert-success";
-                alertBox.innerHTML = `<strong>Success!</strong> ${data.message}`;
-                document.getElementById("quantity").value = 1; // reset qty
+                alertMsg.textContent = data.message;
+                alertBox.classList.add("visible", "success");
+                document.getElementById("quantity").value = 1; 
             } else {
-                alertBox.className = "alert alert-danger";
-                alertBox.innerHTML = `<strong>Error!</strong> ${data.message}`;
+                alertMsg.textContent = data.message;
+                alertBox.classList.add("visible", "error");
             }
         })
         .catch(error => {
-            alertBox.className = "alert alert-danger";
-            alertBox.innerHTML = "<strong>Error!</strong> Could not connect to the server.";
+            alertMsg.textContent = "Could not connect to the server.";
+            alertBox.classList.add("visible", "error");
             console.error(error);
         })
         .finally(() => {
-            alertBox.classList.remove("d-none");
-            submitBtn.innerHTML = '<i class="bi bi-plus-circle"></i> Add to Room Bill';
+            document.getElementById("btnLabel").textContent    = "Add to Room Bill";
+            document.getElementById("btnSpinner").style.display = "none";
             submitBtn.disabled = false;
         });
     });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
--serce

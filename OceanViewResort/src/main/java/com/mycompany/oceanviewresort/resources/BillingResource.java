@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.oceanviewresort.resources;
 
 import com.mycompany.oceanviewresort.dao.BillingDAO;
@@ -15,6 +11,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
+
 /**
  *
  * @author User
@@ -83,6 +80,38 @@ public class BillingResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"status\":\"error\", \"message\":\"Server error processing payment.\"}")
                     .build();
+        }
+    }
+
+    // --- [අලුතින් එකතු කළ කොටස: Outstanding බිල් ටික ගන්න] ---
+    @GET
+    @Path("/outstanding")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOutstandingBills() {
+        return Response.ok(billingDAO.getOutstandingBills()).build();
+    }
+
+    // --- [අලුතින් එකතු කළ කොටස: Special Discount එක දාන්න] ---
+    @POST
+    @Path("/discount")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response applyDiscount(String jsonInput) {
+        try {
+            JSONObject json = new JSONObject(jsonInput);
+            long billId = json.getLong("billId");
+            double discount = json.getDouble("discountAmount");
+            String reason = json.getString("reason");
+            long managerId = json.optLong("managerId", 1); // Get user ID from session later
+
+            if (billingDAO.applySpecialDiscount(billId, discount, reason, managerId)) {
+                return Response.ok("{\"status\":\"success\"}").build();
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST).entity("{\"status\":\"error\"}").build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST).entity("{\"status\":\"error\"}").build();
         }
     }
 }
