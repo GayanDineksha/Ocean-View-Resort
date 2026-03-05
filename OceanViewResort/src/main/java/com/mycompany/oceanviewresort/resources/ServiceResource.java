@@ -11,11 +11,7 @@ package com.mycompany.oceanviewresort.resources;
 import com.mycompany.oceanviewresort.dao.ServiceDAO;
 import com.mycompany.oceanviewresort.model.ReservationServiceDTO;
 import com.mycompany.oceanviewresort.model.ServiceDTO;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
@@ -26,18 +22,15 @@ public class ServiceResource {
     
     private ServiceDAO serviceDAO = new ServiceDAO();
 
+    // For Receptionist (Only Active)
     @GET
+    @Path("/active")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllServices() {
-        try {
-            List<ServiceDTO> list = serviceDAO.getAllActiveServices();
-            return Response.ok(list).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("{\"status\":\"error\", \"message\":\"Failed to fetch services\"}").build();
-        }
+    public Response getAllActiveServices() {
+        return Response.ok(serviceDAO.getAllActiveServices()).build();
     }
 
+    // Add to Bill (Receptionist)
     @POST
     @Path("/add-to-bill")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -45,23 +38,63 @@ public class ServiceResource {
     public Response addServiceToBill(String jsonInput) {
         try {
             JSONObject json = new JSONObject(jsonInput);
-            
             ReservationServiceDTO dto = new ReservationServiceDTO();
             dto.setReservationId(json.getLong("reservationId"));
             dto.setServiceId(json.getInt("serviceId"));
             dto.setQuantity(json.getInt("quantity"));
-            dto.setAddedBy(json.optLong("addedBy", 2)); // Default to Receptionist
+            dto.setAddedBy(json.optLong("addedBy", 2));
             
             if (serviceDAO.addServiceToReservation(dto)) {
-                return Response.ok("{\"status\":\"success\", \"message\":\"Service added to the bill successfully!\"}").build();
+                return Response.ok("{\"status\":\"success\", \"message\":\"Service added to the bill!\"}").build();
             } else {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("{\"status\":\"error\", \"message\":\"Failed to add service to bill. Check if Reservation ID is valid.\"}").build();
+                        .entity("{\"status\":\"error\", \"message\":\"Failed to add service.\"}").build();
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"status\":\"error\", \"message\":\"Invalid request format.\"}").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("{\"status\":\"error\"}").build();
         }
+    }
+
+    // ----------------------------------------------------
+    // MANAGER API ENDPOINTS
+    // ----------------------------------------------------
+
+    @GET
+    @Path("/all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllServicesForManager() {
+        return Response.ok(serviceDAO.getAllServicesForManager()).build();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addService(ServiceDTO dto) {
+        if (serviceDAO.addService(dto)) {
+            return Response.ok("{\"status\":\"success\"}").build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).entity("{\"status\":\"error\"}").build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateService(@PathParam("id") int id, ServiceDTO dto) {
+        dto.setServiceId(id);
+        if (serviceDAO.updateService(dto)) {
+            return Response.ok("{\"status\":\"success\"}").build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).entity("{\"status\":\"error\"}").build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteService(@PathParam("id") int id) {
+        if (serviceDAO.deleteService(id)) {
+            return Response.ok("{\"status\":\"success\"}").build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).entity("{\"status\":\"error\"}").build();
     }
 }

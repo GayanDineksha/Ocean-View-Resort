@@ -12,6 +12,8 @@ public class ServiceDTO {
     private int serviceId;
     private String serviceName;
     private double price;
+    private boolean active; 
+    private String category; 
 
     public ServiceDTO() {}
 
@@ -23,4 +25,10 @@ public class ServiceDTO {
 
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
+
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
+
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 }

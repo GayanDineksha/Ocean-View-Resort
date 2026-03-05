@@ -44,17 +44,17 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             
             <a href="create-reservation.html" class="receptionist-feature"><i class="bi bi-calendar-plus"></i> New Reservation</a>
             <a href="manage-bookings.html" class="receptionist-feature"><i class="bi bi-journal-check"></i> Manage Bookings</a>
-            <a href="add-services.html" class="receptionist-feature"><i class="bi bi-cart-plus"></i> Add Extra Services</a>
+            <a href="add-services.html" class="receptionist-feature"><i class="bi bi-cart-plus"></i> Post Charges</a>
             <a href="billing.html" class="nav-link receptionist-feature"><i class="bi bi-receipt"></i> Billing & Payments</a>
+            
+            <a href="manage-room-types.html" class="manager-feature"><i class="bi bi-tags"></i> Room Pricing</a>
+            <a href="manage-services.html" class="manager-feature"><i class="bi bi-cup-hot"></i> Manage Services</a>
+            <a href="reports.html" class="manager-feature"><i class="bi bi-bar-chart-line"></i> Business Reports</a>
             
             <a href="manage-users.html" class="admin-feature" id="adminMenu"><i class="bi bi-people"></i> Manage Users</a>
             <a href="manage-rooms.html" class="admin-feature"><i class="bi bi-door-open"></i> Manage Rooms</a>
-            <a href="manage-room-types.html" class="admin-feature"><i class="bi bi-tags"></i> Manage Room Types</a>
             <a href="archive-guests.html" class="admin-feature"><i class="bi bi-person-x"></i> Archive Guests</a>
             <a href="view-audit-logs.html" class="admin-feature"><i class="bi bi-shield-lock"></i> Audit Logs</a>
-            
-            <a href="#" class="manager-feature" onclick="alert('Reports - Coming Soon')"><i class="bi bi-bar-chart-line"></i> Business Reports</a>
-            <a href="#" class="manager-feature" onclick="alert('Discounts - Coming Soon')"><i class="bi bi-tags"></i> Discount Control</a>
         </div>
     </div>
 
@@ -93,8 +93,32 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                 <div class="col-md-4 receptionist-feature">
                     <div class="card dash-card p-4 h-100 shadow-sm" onclick="window.location.href='add-services.html'">
                         <div class="icon-box bg-light-success"><i class="bi bi-cart-plus"></i></div>
-                        <h5 class="fw-bold">Add Extra Services</h5>
-                        <p class="text-muted mb-0">Post food, spa, and laundry charges.</p>
+                        <h5 class="fw-bold">Post Charges</h5>
+                        <p class="text-muted mb-0">Post food, spa, and laundry charges to room bills.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4 manager-feature">
+                    <div class="card dash-card p-4 h-100 shadow-sm" onclick="window.location.href='manage-room-types.html'">
+                        <div class="icon-box bg-light-primary"><i class="bi bi-tags"></i></div>
+                        <h5 class="fw-bold">Room Pricing</h5>
+                        <p class="text-muted mb-0">Update room categories and modify pricing tiers.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 manager-feature">
+                    <div class="card dash-card p-4 h-100 shadow-sm" onclick="window.location.href='manage-services.html'">
+                        <div class="icon-box bg-light-primary"><i class="bi bi-cup-hot"></i></div>
+                        <h5 class="fw-bold">Manage Services</h5>
+                        <p class="text-muted mb-0">Add or update prices for food, spa, and laundry.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4 manager-feature">
+                    <div class="card dash-card p-4 h-100 shadow-sm" onclick="window.location.href='reports.html'">
+                        <div class="icon-box bg-light-success"><i class="bi bi-graph-up-arrow"></i></div>
+                        <h5 class="fw-bold">Financial Reports</h5>
+                        <p class="text-muted mb-0">View monthly revenue and occupancy rates.</p>
                     </div>
                 </div>
 
@@ -110,23 +134,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                     <div class="card dash-card p-4 h-100 shadow-sm" onclick="window.location.href='manage-rooms.html'">
                         <div class="icon-box bg-light-warning"><i class="bi bi-door-open"></i></div>
                         <h5 class="fw-bold">Room Configuration</h5>
-                        <p class="text-muted mb-0">Update room statuses and pricing tiers.</p>
-                    </div>
-                </div>
-
-                <div class="col-md-4 manager-feature">
-                    <div class="card dash-card p-4 h-100 shadow-sm">
-                        <div class="icon-box bg-light-success"><i class="bi bi-graph-up-arrow"></i></div>
-                        <h5 class="fw-bold">Financial Reports</h5>
-                        <p class="text-muted mb-0">View monthly revenue and occupancy rates.</p>
-                    </div>
-                </div>
-                
-                <div class="col-md-4 manager-feature">
-                    <div class="card dash-card p-4 h-100 shadow-sm">
-                        <div class="icon-box bg-light-primary"><i class="bi bi-tags"></i></div>
-                        <h5 class="fw-bold">Discount Approvals</h5>
-                        <p class="text-muted mb-0">Review and approve special guest discounts.</p>
+                        <p class="text-muted mb-0">Update physical room statuses (e.g., Maintenance).</p>
                     </div>
                 </div>
 
