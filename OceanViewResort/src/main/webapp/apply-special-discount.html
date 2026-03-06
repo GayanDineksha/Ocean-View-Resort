@@ -3,7 +3,6 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
 -->
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -216,11 +215,24 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         .logout-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
 
         /* ═══════════════════
-           CONTENT
+           CONTENT - CENTERED
         ═══════════════════ */
-        .content { flex: 1; overflow-y: auto; padding: 35px 40px; }
+        .content { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 35px 40px; 
+            /* Added Flexbox to center the inner wrapper */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Aligns to top, change to 'center' if you want it exactly middle vertically */
+        }
+        
+        .center-wrapper {
+            width: 100%;
+            max-width: 680px; /* Limits the width of the whole block */
+        }
 
-        .page-header { margin-bottom: 30px; }
+        .page-header { margin-bottom: 30px; text-align: center; } /* Centered header text */
         .page-header h2 {
             font-family: 'Cormorant Garamond', serif;
             font-size: 2.1rem; font-weight: 400;
@@ -236,10 +248,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             background: var(--bg-card);
             border-radius: 16px;
             border: 1px solid var(--border-color);
-            /* Gold left accent — replaces Bootstrap border-warning */
             border-left: 4px solid var(--warn);
             padding: 36px 40px;
-            max-width: 680px;
+            width: 100%;
             transition: background 0.3s, border-color 0.3s;
         }
 
@@ -309,7 +320,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             border-color: var(--warn);
             box-shadow: 0 0 0 3px rgba(232,168,56,.12);
         }
-        /* Read-only balance field */
         input.f-input[readonly] {
             background: rgba(232,168,56,.07);
             border-color: rgba(232,168,56,.25);
@@ -353,6 +363,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             body { overflow: auto; height: auto; }
             .sidebar { position: relative; width: 100%; height: auto; }
             .main-content { margin-left: 0; width: 100%; }
+            .content { padding: 24px 20px; }
             .form-card { padding: 24px 20px; }
             .field-row { grid-template-columns: 1fr; }
         }
@@ -360,9 +371,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
 </head>
 <body>
 
-<!-- ═══════════════════════════════
-     SIDEBAR
-═══════════════════════════════ -->
 <div class="sidebar">
     <div class="sidebar-logo">
         <span class="sidebar-logo-name">Ocean View<br>Resort</span>
@@ -456,9 +464,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
     </div>
 </div>
 
-<!-- ═══════════════════════════════
-     MAIN CONTENT
-═══════════════════════════════ -->
 <div class="main-content">
 
     <div class="topbar">
@@ -487,75 +492,67 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
     </div>
 
     <div class="content">
-
-        <div class="page-header">
-            <h2>Apply Special <span>Discount</span></h2>
-            <p>Override bill discounts with mandatory accountability reasons.</p>
-        </div>
-
-        <div class="form-card">
-
-            <div id="alertBox">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
-                <span id="alertMsg"></span>
+        <div class="center-wrapper">
+            <div class="page-header">
+                <h2>Apply Special <span>Discount</span></h2>
+                <p>Override bill discounts with mandatory accountability reasons.</p>
             </div>
 
-            <!-- ══ FORM — original id attributes 100% untouched ══ -->
-            <form id="discountForm">
+            <div class="form-card">
 
-                <div class="form-section-title">
-                    <svg viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-                    Discount Details
+                <div id="alertBox">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+                    <span id="alertMsg"></span>
                 </div>
 
-                <!-- Select Bill -->
-                <div class="field-group">
-                    <label class="field-label" for="billSelect">Select Outstanding Bill</label>
-                    <select class="f-input" id="billSelect" required onchange="updateBalanceDisplay()">
-                        <option value="" disabled selected>Loading bills...</option>
-                    </select>
-                    <span class="field-hint">Only active unpaid/partial bills are shown.</span>
-                </div>
+                <form id="discountForm">
 
-                <!-- Balance + Discount Amount -->
-                <div class="field-row">
-                    <div>
-                        <label class="field-label" for="currentBalance">Current Balance (Rs.)</label>
-                        <input type="text" class="f-input" id="currentBalance" readonly value="0.00">
+                    <div class="form-section-title">
+                        <svg viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                        Discount Details
                     </div>
-                    <div>
-                        <label class="field-label" for="discountAmount">New Discount Amount (Rs.)</label>
-                        <input type="number" class="f-input" id="discountAmount" step="0.01" min="0" required placeholder="0.00">
+
+                    <div class="field-group">
+                        <label class="field-label" for="billSelect">Select Outstanding Bill</label>
+                        <select class="f-input" id="billSelect" required onchange="updateBalanceDisplay()">
+                            <option value="" disabled selected>Loading bills...</option>
+                        </select>
+                        <span class="field-hint">Only active unpaid/partial bills are shown.</span>
                     </div>
-                </div>
 
-                <!-- Reason -->
-                <div class="field-group">
-                    <label class="field-label" for="discountReason">
-                        Reason for Discount <span class="req">*</span>
-                    </label>
-                    <textarea class="f-input" id="discountReason" rows="3"
-                        placeholder="e.g. VIP Guest, Service delay compensation..." required></textarea>
-                    <span class="field-hint warn">This reason will be logged in the System Audit for accountability.</span>
-                </div>
+                    <div class="field-row">
+                        <div>
+                            <label class="field-label" for="currentBalance">Current Balance (Rs.)</label>
+                            <input type="text" class="f-input" id="currentBalance" readonly value="0.00">
+                        </div>
+                        <div>
+                            <label class="field-label" for="discountAmount">New Discount Amount (Rs.)</label>
+                            <input type="number" class="f-input" id="discountAmount" step="0.01" min="0" required placeholder="0.00">
+                        </div>
+                    </div>
 
-                <!-- Submit -->
-                <button type="submit" id="submitBtn">
-                    <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>
-                    <span id="btnLabel">Apply Discount &amp; Recalculate Bill</span>
-                    <span class="spinner" id="btnSpinner"></span>
-                </button>
+                    <div class="field-group">
+                        <label class="field-label" for="discountReason">
+                            Reason for Discount <span class="req">*</span>
+                        </label>
+                        <textarea class="f-input" id="discountReason" rows="3"
+                            placeholder="e.g. VIP Guest, Service delay compensation..." required></textarea>
+                        <span class="field-hint warn">This reason will be logged in the System Audit for accountability.</span>
+                    </div>
 
-            </form>
+                    <button type="submit" id="submitBtn">
+                        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>
+                        <span id="btnLabel">Apply Discount &amp; Recalculate Bill</span>
+                        <span class="spinner" id="btnSpinner"></span>
+                    </button>
+
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     ORIGINAL JAVASCRIPT — zero logic changes
-═══════════════════════════════════════ -->
 <script>
-    // ─── Theme Logic (same as dashboard) ───
     function applyTheme(theme) {
         document.body.setAttribute("data-theme", theme);
         localStorage.setItem("theme", theme);
@@ -572,7 +569,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
     }
     applyTheme(localStorage.getItem("theme") || "light");
 
-    // ─── Security Check: Manager Only — ORIGINAL ───
     const userRole = sessionStorage.getItem("userRole");
     const userId   = sessionStorage.getItem("userId") || 1;
 
@@ -581,7 +577,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         window.location.href = "dashboard.html";
     }
 
-    // ─── Sidebar user info ───
     const currentUser = sessionStorage.getItem("loggedInUser") || "User";
     document.getElementById("welcomeUser").innerText     = currentUser;
     document.getElementById("userRoleBadge").innerText   = userRole || "—";
@@ -589,7 +584,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
     document.getElementById("sidebarUserRole").innerText = userRole || "—";
     document.getElementById("sidebarAvatar").innerText   = currentUser.charAt(0).toUpperCase();
 
-    // Role-based sidebar visibility
     const role = (userRole || "").toLowerCase();
     if (role === 'admin') {
         document.querySelectorAll('.admin-feature').forEach(el => {
@@ -610,7 +604,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         window.location.href = "login.html";
     }
 
-    // ─── Load bills — ORIGINAL ───
     let allBills = [];
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -633,7 +626,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             .catch(err => console.error(err));
     });
 
-    // ─── Update balance display — ORIGINAL ───
     function updateBalanceDisplay() {
         const billId = document.getElementById("billSelect").value;
         const bill   = allBills.find(b => b.billId == billId);
@@ -642,7 +634,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         }
     }
 
-    // ─── Form submit — ORIGINAL ───
     document.getElementById("discountForm").addEventListener("submit", function (event) {
         event.preventDefault();
 
@@ -657,7 +648,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             managerId:      parseInt(userId)
         };
 
-        // Loading state
         document.getElementById("btnLabel").textContent    = "Processing...";
         document.getElementById("btnSpinner").style.display = "block";
         btn.disabled = true;
@@ -671,7 +661,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         .then(res => res.json())
         .then(data => {
             if (data.status === 'success') {
-                // ORIGINAL behaviour preserved
                 alert("Special Discount Applied Successfully! The bill total has been recalculated.");
                 window.location.reload();
             } else {
