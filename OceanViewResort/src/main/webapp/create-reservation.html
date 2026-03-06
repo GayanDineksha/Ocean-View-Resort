@@ -385,13 +385,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
 
                 <div class="f-group">
                     <label class="f-label" for="nicPassport">NIC / Passport</label>
-                    <input type="text" class="f-input" id="nicPassport" required placeholder="e.g. 199012345678">
+                    <input type="text" class="f-input" id="nicPassport" required placeholder="e.g. 199012345678" maxlength="12" pattern="([0-9]{9}[Vv]|[0-9]{12})" title="Enter 9 digits with V/v or 12 digits">
                 </div>
 
                 <div class="f-row">
                     <div class="f-group">
                         <label class="f-label" for="contactNumber">Contact Number</label>
-                        <input type="text" class="f-input" id="contactNumber" required placeholder="e.g. 0770000000">
+                        <input type="text" class="f-input" id="contactNumber" required placeholder="e.g. 0770000000" maxlength="10" pattern="[0-9]{10}" title="Please enter exactly 10 digits">
                     </div>
                     <div class="f-group">
                         <label class="f-label" for="email">Email <span class="opt">(optional)</span></label>
