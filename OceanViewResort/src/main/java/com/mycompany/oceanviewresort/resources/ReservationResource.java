@@ -98,4 +98,57 @@ public class ReservationResource {
                            .entity("{\"status\":\"error\", \"message\":\"Server error occurred\"}").build();
         }
     }
+    
+    @PUT
+    @Path("/details/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateReservationDetails(@PathParam("id") long id, String jsonInput) {
+        try {
+            JSONObject json = new JSONObject(jsonInput);
+            
+            ReservationDTO dto = new ReservationDTO();
+            dto.setReservationId(id);
+            dto.setGuestId(json.getLong("guestId"));
+            dto.setGuestName(json.getString("guestName"));
+            dto.setNicPassport(json.getString("guestNic"));
+            dto.setContactNumber(json.getString("guestPhone"));
+            dto.setEmail(json.optString("guestEmail", ""));
+            dto.setCheckOutDate(json.getString("checkOut"));
+            dto.setAdults(json.getInt("adults"));
+            dto.setChildren(json.getInt("children"));
+
+            // Calling the exact method name from your ReservationDAO
+            if (reservationDAO.updateBookingAndGuestDetails(dto)) {
+                return Response.ok("{\"status\":\"success\", \"message\":\"Booking details updated successfully!\"}").build();
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST)
+                               .entity("{\"status\":\"error\", \"message\":\"Failed to update details\"}").build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("{\"status\":\"error\", \"message\":\"Server error occurred\"}").build();
+        }
+    }
+    
+    @GET
+    @Path("/dashboard-stats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDashboardStats() {
+        try {
+            // Temporary dummy data for the dashboard UI testing
+            // You can link this to real SQL COUNT() queries in your DAO later!
+            JSONObject stats = new JSONObject();
+            stats.put("totalRooms", 24);
+            stats.put("occupancyPercentage", 85);
+            stats.put("checkInsToday", 5);
+            
+            return Response.ok(stats.toString()).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("{\"status\":\"error\"}").build();
+        }
+    }
 }
