@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -64,29 +68,31 @@
 
         .back-link {
             display: inline-flex; align-items: center; gap: 8px;
-            font-size: 0.72rem; font-weight: 300; letter-spacing: 0.15em;
+            font-size: 0.95rem; /* 0.72 -> 0.95 */
+            font-weight: 300; letter-spacing: 0.15em;
             text-transform: uppercase; color: rgba(240,232,216,.6);
             text-decoration: none; transition: color .2s;
         }
         .back-link:hover { color: var(--gold); }
-        .back-link svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+        .back-link svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
 
         .bg-quote { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 10px; }
 
         .quote-text {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(1.6rem, 2.8vw, 2.8rem);
+            font-size: clamp(2rem, 3.5vw, 3.5rem); /* ලොකු කළා */
             font-weight: 300; font-style: italic;
             color: var(--white); line-height: 1.3; margin-bottom: 20px;
         }
 
         .quote-attr {
-            font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+            font-size: 0.9rem; /* 0.7 -> 0.9 */
+            letter-spacing: 0.2em; text-transform: uppercase;
             color: var(--gold); display: flex; align-items: center; gap: 12px;
         }
         .quote-attr::before { content: ''; display: block; width: 28px; height: 1px; background: var(--gold); }
 
-        .bg-footer { font-size: 0.68rem; letter-spacing: 0.08em; color: rgba(240,232,216,.4); }
+        .bg-footer { font-size: 0.85rem; /* 0.68 -> 0.85 */ letter-spacing: 0.08em; color: rgba(240,232,216,.4); }
 
         /* ─── RIGHT FORM PANEL ─── */
         .form-col {
@@ -109,7 +115,7 @@
         }
 
         .form-wrap {
-            width: 100%; max-width: 360px;
+            width: 100%; max-width: 420px; /* 360 -> 420 අකුරු ලොකු නිසා පලල් කළා */
             position: relative; z-index: 1;
             animation: riseIn .7s cubic-bezier(.22,1,.36,1) .15s both;
         }
@@ -125,17 +131,20 @@
         .form-brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
         .form-brand-name {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 0.95rem; font-weight: 300; letter-spacing: 0.22em;
+            font-size: 1.2rem; /* 0.95 -> 1.2 */
+            font-weight: 300; letter-spacing: 0.22em;
             text-transform: uppercase; color: var(--ocean-deep);
         }
 
         h1.form-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 2.4rem; font-weight: 400;
+            font-size: 3.0rem; /* 2.4 -> 3.0 */
+            font-weight: 400;
             color: var(--ocean-deep); line-height: 1.1; margin-bottom: 6px;
         }
         .form-subtitle {
-            font-size: 0.8rem; font-weight: 300; color: #8fa0ac;
+            font-size: 1.1rem; /* 0.8 -> 1.1 */
+            font-weight: 300; color: #8fa0ac;
             letter-spacing: 0.03em; margin-bottom: 36px;
         }
 
@@ -144,16 +153,18 @@
             display: none; align-items: center; gap: 10px;
             background: #fff0f0; border: 1px solid rgba(224,92,92,.25);
             border-radius: 9px; padding: 13px 16px; margin-bottom: 22px;
-            font-size: 0.78rem; font-weight: 300; color: #c0392b;
+            font-size: 0.95rem; /* 0.78 -> 0.95 */
+            font-weight: 300; color: #c0392b;
         }
         #errorBox.visible { display: flex; }
-        #errorBox svg { width: 15px; height: 15px; stroke: var(--err); fill: none; stroke-width: 2; flex-shrink: 0; }
+        #errorBox svg { width: 18px; height: 18px; stroke: var(--err); fill: none; stroke-width: 2; flex-shrink: 0; }
 
         /* ─── FORM FIELDS ─── */
         .field-group { margin-bottom: 20px; }
 
         .field-label {
-            display: block; font-size: 0.68rem; font-weight: 500;
+            display: block; font-size: 0.85rem; /* 0.68 -> 0.85 */
+            font-weight: 500;
             letter-spacing: 0.14em; text-transform: uppercase;
             color: #6b8090; margin-bottom: 8px;
         }
@@ -162,7 +173,7 @@
 
         .field-icon {
             position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-            width: 16px; height: 16px;
+            width: 18px; height: 18px;
             stroke: var(--ocean); fill: none; stroke-width: 1.6;
             stroke-linecap: round; stroke-linejoin: round;
             pointer-events: none; opacity: .45; transition: opacity .2s;
@@ -176,17 +187,18 @@
             opacity: .35; transition: opacity .2s;
         }
         .toggle-pw:hover { opacity: .85; }
-        .toggle-pw svg { width: 17px; height: 17px; stroke: var(--ocean); fill: none; stroke-width: 1.6; }
+        .toggle-pw svg { width: 19px; height: 19px; stroke: var(--ocean); fill: none; stroke-width: 1.6; }
 
         input[type=text],
         input[type=password] {
             width: 100%;
-            padding: 14px 16px 14px 44px;
+            padding: 15px 16px 15px 46px;
             border: 1.5px solid rgba(26,58,74,.14);
             border-radius: 10px;
             background: var(--white);
             font-family: 'Jost', sans-serif;
-            font-size: 0.9rem; font-weight: 300;
+            font-size: 1.1rem; /* 0.9 -> 1.1 */
+            font-weight: 300;
             color: var(--ocean-deep);
             outline: none;
             transition: border-color .2s, box-shadow .2s;
@@ -207,28 +219,30 @@
 
         .check-label {
             display: flex; align-items: center; gap: 9px;
-            cursor: pointer; font-size: 0.78rem; font-weight: 300; color: #7a8e9a;
+            cursor: pointer; font-size: 0.95rem; /* 0.78 -> 0.95 */
+            font-weight: 300; color: #7a8e9a;
             user-select: none;
         }
         .check-label input[type=checkbox] { display: none; }
         .check-box {
-            width: 17px; height: 17px; border-radius: 5px;
+            width: 18px; height: 18px; border-radius: 5px;
             border: 1.5px solid rgba(26,58,74,.2);
             background: var(--white); flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
             transition: border-color .2s, background .2s;
         }
         .check-label input:checked + .check-box { background: var(--ocean-deep); border-color: var(--ocean-deep); }
-        .check-box svg { width: 9px; height: 9px; stroke: white; fill: none; stroke-width: 2.5; display: none; }
+        .check-box svg { width: 10px; height: 10px; stroke: white; fill: none; stroke-width: 2.5; display: none; }
         .check-label input:checked + .check-box svg { display: block; }
 
         /* ─── SUBMIT BUTTON ─── */
         #loginBtn {
-            width: 100%; padding: 15px;
+            width: 100%; padding: 16px;
             background: var(--ocean-deep); color: var(--sand);
             border: none; border-radius: 10px; cursor: pointer;
             font-family: 'Jost', sans-serif;
-            font-size: 0.88rem; font-weight: 400;
+            font-size: 1.1rem; /* 0.88 -> 1.1 */
+            font-weight: 400;
             letter-spacing: 0.12em; text-transform: uppercase;
             display: flex; align-items: center; justify-content: center; gap: 10px;
             transition: background .25s, transform .15s, box-shadow .25s;
@@ -242,14 +256,14 @@
         #loginBtn:disabled { opacity: .65; cursor: not-allowed; transform: none !important; }
 
         .btn-arrow {
-            width: 16px; height: 16px;
+            width: 18px; height: 18px;
             stroke: var(--gold-light); fill: none; stroke-width: 1.8; stroke-linecap: round;
             transition: transform .2s; flex-shrink: 0;
         }
         #loginBtn:hover:not(:disabled) .btn-arrow { transform: translateX(3px); }
 
         .spinner {
-            width: 15px; height: 15px;
+            width: 16px; height: 16px;
             border: 2px solid rgba(240,232,216,.3);
             border-top-color: var(--gold-light);
             border-radius: 50%;
@@ -259,8 +273,9 @@
         @keyframes spin { to { transform: rotate(360deg); } }
 
         .form-bottom {
-            margin-top: 28px; text-align: center;
-            font-size: 0.7rem; font-weight: 300; color: #aab8c2; letter-spacing: 0.04em;
+            margin-top: 32px; text-align: center;
+            font-size: 0.9rem; /* 0.7 -> 0.9 */
+            font-weight: 300; color: #aab8c2; letter-spacing: 0.04em;
         }
 
         @media (max-width: 820px) {
@@ -358,10 +373,6 @@
             </button>
 
         </form>
-
-        <div class="form-bottom">
-            CIS6003 Advanced Programming · Cardiff Metropolitan University
-        </div>
 
     </div>
 </div>

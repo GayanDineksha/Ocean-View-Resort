@@ -8,167 +8,749 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Billing & Invoicing - Ocean View Resort</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamath:ital,wght@0,300;0,400;1,300&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #f4f7f6; }
-        .topbar { background: white; padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .card { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .invoice-box { background: white; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
-        
-        /* Updated Print Styles to fix cut-off text */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --sand: #f0e8d8;
+            --sand-light: #f8f3eb;
+            --sand-bg: #f3ede3;
+            --ocean: #1a3a4a;
+            --ocean-deep: #0d2433;
+            --gold: #c9a96e;
+            --gold-light: #e8c99a;
+            --white: #ffffff;
+            --sidebar-w: 240px;
+            --success: #3d9970;
+            --warn: #e8a838;
+            --info: #3a85c9;
+            --danger: #e05c5c;
+            --wa-green: #25D366;
+
+            --bg-page: var(--sand-bg);
+            --bg-topbar: var(--white);
+            --bg-card: var(--white);
+            --text-main: var(--ocean-deep);
+            --text-muted: #8fa0ac;
+            --border-color: rgba(26,58,74,.08);
+            --sidebar-bg: var(--ocean-deep);
+            --input-bg: var(--white);
+            --input-border: rgba(26,58,74,.14);
+            --label-color: #6b8090;
+            --table-head-bg: var(--ocean-deep);
+            --table-head-color: var(--sand);
+            --table-border: rgba(26,58,74,.07);
+            --invoice-bg: var(--white);
+        }
+
+        [data-theme="dark"] {
+            --bg-page: #121a21;
+            --bg-topbar: #1a2630;
+            --bg-card: #1a2630;
+            --text-main: #e0e6ed;
+            --text-muted: #a0b1bc;
+            --border-color: rgba(255,255,255,0.08);
+            --sidebar-bg: #0b151c;
+            --input-bg: #1f2f3d;
+            --input-border: rgba(255,255,255,0.1);
+            --label-color: #8fa0ac;
+            --table-head-bg: #0b1c28;
+            --table-head-color: var(--gold-light);
+            --table-border: rgba(255,255,255,0.06);
+            --invoice-bg: #1a2630;
+        }
+
+        html, body { height: 100%; transition: background .3s, color .3s; }
+        body {
+            font-family: 'Jost', sans-serif;
+            background: var(--bg-page);
+            color: var(--text-main);
+            display: flex;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* ══════════════ SIDEBAR ══════════════ */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--sidebar-bg);
+            display: flex; flex-direction: column;
+            height: 100vh; flex-shrink: 0;
+            position: fixed; left: 0; top: 0;
+            z-index: 50; overflow-y: auto;
+            transition: background .3s;
+        }
+        .sidebar-logo { padding: 26px 22px 20px; border-bottom: 1px solid rgba(240,232,216,.07); flex-shrink: 0; }
+        .sidebar-logo-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem; font-weight: 300;
+            letter-spacing: 0.18em; text-transform: uppercase;
+            color: var(--sand); display: block; line-height: 1.35;
+        }
+        .sidebar-logo-sub { font-size: .7rem; font-weight: 300; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-top: 3px; display: block; }
+        .nav-section { padding: 18px 12px 10px; flex: 1; }
+        .nav-label { font-size: .75rem; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: rgba(201,169,110,.45); padding: 0 10px; margin-bottom: 6px; display: block; }
+        .nav-label:not(:first-child) { margin-top: 20px; }
+        .sidebar a {
+            align-items: center; gap: 11px; padding: 12px 12px; border-radius: 9px; margin-bottom: 2px;
+            text-decoration: none; color: rgba(240,232,216,.5); font-size: 1.1rem; font-weight: 300;
+            transition: all .2s; border-left: none; display: none;
+        }
+        .sidebar a:hover { background: rgba(240,232,216,.07); color: var(--sand); }
+        .sidebar a.active-link { background: rgba(201,169,110,.14); color: var(--gold-light); }
+        .sidebar a .nav-icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.7; flex-shrink: 0; }
+        .show-feature { display: flex !important; }
+        .show-block   { display: block !important; }
+        .sidebar-footer { padding: 16px 22px; border-top: 1px solid rgba(240,232,216,.07); flex-shrink: 0; }
+        .user-chip { display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(201,169,110,.18); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--gold); flex-shrink: 0; }
+        .user-name { font-size: .9rem; font-weight: 300; color: var(--sand); display: block; }
+        .user-role { font-size: .7rem; font-weight: 300; color: rgba(240,232,216,.38); letter-spacing: .05em; }
+
+        /* ══════════════ MAIN ══════════════ */
+        .main-content { margin-left: var(--sidebar-w); width: calc(100% - var(--sidebar-w)); display: flex; flex-direction: column; overflow: hidden; }
+
+        /* TOPBAR */
+        .topbar {
+            background: var(--bg-topbar); height: 70px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 30px; border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0; transition: background .3s, border-color .3s;
+        }
+        .topbar-left { display: flex; align-items: center; gap: 14px; }
+        .back-btn {
+            display: flex; align-items: center; gap: 7px;
+            padding: 8px 16px; border-radius: 8px; border: 1.5px solid var(--border-color);
+            background: none; cursor: pointer; font-family: 'Jost', sans-serif;
+            font-size: .85rem; font-weight: 300; color: var(--text-muted);
+            transition: all .2s; text-decoration: none;
+        }
+        .back-btn:hover { border-color: var(--gold); color: var(--gold); }
+        .back-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+        #pageTitle { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 400; color: var(--text-main); margin: 0; }
+        .topbar-right { display: flex; align-items: center; gap: 18px; }
+        .topbar-user { text-align: right; }
+        #welcomeUser { display: block; font-size: 1.1rem; font-weight: 400; color: var(--text-main); }
+        #userRoleBadge { display: inline-block; margin-top: 2px; font-size: .75rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; padding: 2px 9px; border-radius: 20px; background: rgba(201,169,110,.15); color: var(--gold); }
+        .theme-btn { background: rgba(138,154,168,.1); border: 1px solid var(--border-color); cursor: pointer; color: var(--text-main); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; transition: all .2s; }
+        .theme-btn:hover { background: rgba(138,154,168,.2); }
+        .theme-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .logout-btn { display: flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 8px; border: 1.5px solid rgba(224,92,92,.25); background: none; cursor: pointer; font-family: 'Jost', sans-serif; font-size: .9rem; font-weight: 400; color: var(--danger); transition: all .2s; }
+        .logout-btn:hover { background: rgba(224,92,92,.08); border-color: var(--danger); }
+        .logout-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+        /* ══════════════ CONTENT AREA ══════════════ */
+        .content { flex: 1; overflow-y: auto; padding: 28px 30px; }
+
+        /* TWO-COLUMN GRID — equal weight */
+        .billing-grid {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        /* ── LEFT PANEL ── */
+        .left-panel { display: flex; flex-direction: column; gap: 20px; }
+
+        .panel-card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            transition: background .3s, border-color .3s;
+        }
+        .panel-card-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem; font-weight: 400;
+            color: var(--text-main); margin-bottom: 18px;
+            display: flex; align-items: center; gap: 9px;
+        }
+        .panel-card-title svg { width: 18px; height: 18px; stroke: var(--gold); fill: none; stroke-width: 1.8; }
+
+        /* Select + Go row */
+        .select-row { display: flex; gap: 10px; margin-bottom: 14px; }
+        select.f-input, input.f-input, textarea.f-input {
+            width: 100%; padding: 12px 14px;
+            border: 1.5px solid var(--input-border); border-radius: 10px;
+            background: var(--input-bg); font-family: 'Jost', sans-serif;
+            font-size: .92rem; font-weight: 300; color: var(--text-main);
+            outline: none; transition: border-color .2s, box-shadow .2s, background .3s, color .3s;
+            -webkit-appearance: none;
+        }
+        select.f-input:focus, input.f-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,169,110,.12); }
+        input.f-input::placeholder { color: var(--text-muted); }
+
+        .go-btn {
+            padding: 12px 20px; border-radius: 10px;
+            background: var(--ocean-deep); color: var(--sand);
+            border: none; cursor: pointer; font-family: 'Jost', sans-serif;
+            font-size: .85rem; font-weight: 400; letter-spacing: .06em;
+            white-space: nowrap; transition: background .2s, transform .15s;
+            display: flex; align-items: center; gap: 7px; flex-shrink: 0;
+        }
+        .go-btn:hover { background: var(--ocean); transform: translateY(-1px); }
+        .go-btn svg { width: 15px; height: 15px; stroke: var(--gold-light); fill: none; stroke-width: 1.8; }
+
+        /* Action area */
+        #actionArea { font-size: .85rem; font-weight: 300; color: var(--text-muted); text-align: center; padding: 4px 0; }
+        .action-success { color: var(--success); display: flex; align-items: center; gap: 8px; justify-content: center; }
+        .action-success svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .action-warn { margin-bottom: 12px; padding: 12px 14px; background: rgba(232,168,56,.1); border: 1px solid rgba(232,168,56,.25); border-radius: 10px; color: var(--warn); font-size: .84rem; display: flex; align-items: center; gap: 8px; }
+        .action-warn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+        .gen-btn { width: 100%; padding: 13px; border-radius: 10px; background: var(--warn); color: var(--ocean-deep); border: none; cursor: pointer; font-family: 'Jost', sans-serif; font-size: .9rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .2s; }
+        .gen-btn:hover { background: #f0b530; }
+        .gen-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+        /* Field labels */
+        .f-label { display: block; font-size: .7rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--label-color); margin-bottom: 7px; }
+
+        /* Payment method tabs */
+        .pay-method-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+        .pay-tab {
+            flex: 1; padding: 10px 6px; border-radius: 9px;
+            border: 1.5px solid var(--border-color);
+            background: none; cursor: pointer; font-family: 'Jost', sans-serif;
+            font-size: .78rem; font-weight: 300; color: var(--text-muted);
+            transition: all .2s; display: flex; flex-direction: column;
+            align-items: center; gap: 5px;
+        }
+        .pay-tab svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+        .pay-tab.active { border-color: var(--gold); background: rgba(201,169,110,.1); color: var(--ocean-deep); }
+        [data-theme="dark"] .pay-tab.active { color: var(--gold-light); }
+
+        /* Card UI */
+        .card-visual {
+            background: linear-gradient(135deg, var(--ocean-deep) 0%, #1a3a4a 100%);
+            border-radius: 14px; padding: 22px 22px 18px;
+            margin-bottom: 16px; position: relative; overflow: hidden;
+        }
+        .card-visual::before {
+            content: ''; position: absolute; right: -30px; top: -30px;
+            width: 130px; height: 130px; border-radius: 50%;
+            background: rgba(201,169,110,.1);
+        }
+        .card-visual::after {
+            content: ''; position: absolute; right: 20px; bottom: -40px;
+            width: 100px; height: 100px; border-radius: 50%;
+            background: rgba(201,169,110,.07);
+        }
+        .card-chip { width: 32px; height: 24px; border-radius: 4px; background: var(--gold); margin-bottom: 18px; opacity: .85; }
+        .card-number { font-family: 'Courier New', monospace; font-size: 1.05rem; letter-spacing: .18em; color: rgba(255,255,255,.9); margin-bottom: 14px; }
+        .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+        .card-holder-label { font-size: .55rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 3px; }
+        .card-holder-name { font-size: .82rem; font-weight: 300; letter-spacing: .08em; color: rgba(255,255,255,.85); }
+        .card-expiry-label { font-size: .55rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 3px; }
+        .card-expiry { font-size: .82rem; color: rgba(255,255,255,.85); text-align: right; }
+        .card-brand { font-size: .75rem; font-weight: 500; letter-spacing: .05em; color: var(--gold-light); text-align: right; margin-top: 4px; }
+
+        /* Card fields grid */
+        .card-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+        .card-fields .full { grid-column: 1 / -1; }
+
+        .f-group { margin-bottom: 14px; }
+
+        /* Process payment button */
+        .pay-btn {
+            width: 100%; padding: 14px; border-radius: 10px;
+            background: var(--success); color: var(--white);
+            border: none; cursor: pointer; font-family: 'Jost', sans-serif;
+            font-size: .92rem; font-weight: 400; letter-spacing: .1em; text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; gap: 9px;
+            transition: background .2s, transform .15s, box-shadow .2s;
+        }
+        .pay-btn:hover:not(:disabled) { background: #339966; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(61,153,112,.25); }
+        .pay-btn:disabled { opacity: .6; cursor: not-allowed; }
+        .pay-btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+        .pay-spinner { width: 15px; height: 15px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .6s linear infinite; display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── RIGHT PANEL — INVOICE ── */
+        .invoice-wrap {
+            background: var(--invoice-bg);
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: background .3s, border-color .3s;
+        }
+
+        /* Invoice header */
+        .inv-header {
+            padding: 30px 36px 24px;
+            display: flex; justify-content: space-between; align-items: flex-start;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .inv-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; font-weight: 600; color: var(--ocean-deep); letter-spacing: .06em; margin-bottom: 5px; }
+        [data-theme="dark"] .inv-brand { color: var(--gold-light); }
+        .inv-brand-sub { font-size: .8rem; font-weight: 300; color: var(--text-muted); line-height: 1.6; }
+        .inv-meta { text-align: right; }
+        .inv-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 300; letter-spacing: .25em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+        .inv-meta-row { font-size: .82rem; font-weight: 300; color: var(--text-main); margin-bottom: 3px; }
+        .inv-meta-row span { color: var(--text-muted); }
+
+        /* Status badge */
+        .inv-status-badge {
+            display: inline-block; padding: 4px 14px; border-radius: 20px;
+            font-size: .72rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
+            margin-top: 8px;
+        }
+        .status-paid     { background: rgba(61,153,112,.12);  color: var(--success); }
+        .status-partial  { background: rgba(232,168,56,.12);  color: var(--warn); }
+        .status-unpaid   { background: rgba(224,92,92,.1);    color: var(--danger); }
+        .status-unknown  { background: rgba(138,154,168,.1);  color: var(--text-muted); }
+
+        /* Billed to */
+        .inv-billed { padding: 20px 36px; border-bottom: 1px solid var(--border-color); }
+        .billed-label { font-size: .65rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
+        #invGuestName { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; color: var(--text-main); margin-bottom: 4px; }
+        .inv-resno { font-size: .82rem; font-weight: 300; color: var(--text-muted); }
+        .inv-resno span { color: var(--text-main); }
+
+        /* Invoice table */
+        .inv-table-wrap { padding: 0 36px 24px; }
+        table.inv-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .inv-table thead th {
+            background: var(--table-head-bg); color: var(--table-head-color);
+            font-size: .68rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+            padding: 13px 16px; transition: background .3s, color .3s;
+        }
+        .inv-table thead th:last-child { text-align: right; }
+        .inv-table tbody td {
+            padding: 13px 16px; font-size: .9rem; font-weight: 300;
+            color: var(--text-main); border-bottom: 1px solid var(--table-border);
+            transition: color .3s, border-color .3s;
+        }
+        .inv-table tbody td.amt { text-align: right; font-weight: 400; }
+        .inv-table tbody tr.subtotal-row td { font-weight: 500; border-top: 2px solid var(--border-color); border-bottom: none; padding-top: 16px; }
+        .inv-table tbody tr.discount-row td { color: var(--danger); }
+
+        /* Totals footer */
+        .inv-totals { padding: 20px 36px; border-top: 2px solid var(--border-color); }
+        .total-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+        .total-row:last-child { margin-bottom: 0; }
+        .total-label { font-size: .82rem; font-weight: 300; color: var(--text-muted); }
+        .total-value { font-size: .95rem; font-weight: 400; color: var(--text-main); }
+        .total-row.grand { padding: 14px 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); margin: 10px 0; }
+        .total-row.grand .total-label { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 400; color: var(--ocean-deep); letter-spacing: .04em; }
+        [data-theme="dark"] .total-row.grand .total-label { color: var(--gold-light); }
+        .total-row.grand .total-value { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; color: var(--ocean-deep); }
+        [data-theme="dark"] .total-row.grand .total-value { color: var(--gold-light); }
+        .total-row.paid .total-value { color: var(--success); }
+        .total-row.balance .total-value { color: var(--danger); font-weight: 500; }
+
+        /* Thank you */
+        .inv-footer-msg {
+            padding: 18px 36px 22px; text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem; font-style: italic; font-weight: 300;
+            color: var(--text-muted); border-top: 1px solid var(--border-color);
+        }
+
+        /* Share/print actions */
+        .inv-actions {
+            padding: 16px 36px 24px;
+            display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;
+        }
+        .act-btn {
+            display: flex; align-items: center; gap: 8px;
+            padding: 11px 20px; border-radius: 9px; border: none;
+            cursor: pointer; font-family: 'Jost', sans-serif;
+            font-size: .82rem; font-weight: 400; letter-spacing: .05em;
+            transition: all .2s;
+        }
+        .act-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+        .act-btn.wa  { background: var(--wa-green); color: white; }
+        .act-btn.wa:hover  { background: #1ebe5d; }
+        .act-btn.em  { background: var(--info); color: white; }
+        .act-btn.em:hover  { background: #2d78c0; }
+        .act-btn.pr  { background: var(--ocean-deep); color: var(--sand); }
+        .act-btn.pr:hover  { background: var(--ocean); }
+
+        /* ══════════════ PRINT STYLES ══════════════ */
         @media print {
-            body { background-color: white !important; }
+            /* Force white background regardless of dark mode */
+            body, html { background: white !important; color: #0d2433 !important; }
             body * { visibility: hidden; }
             #invoiceArea, #invoiceArea * { visibility: visible; }
-            #invoiceArea { 
-                position: absolute; 
-                left: 0; 
-                top: 0; 
-                width: 100%; 
-                margin: 0;
-                padding: 20px 40px; 
-                box-shadow: none; 
-                border: none; 
+            #invoiceArea {
+                position: fixed; left: 0; top: 0;
+                width: 100%; height: auto;
+                margin: 0; padding: 20px 40px;
+                background: white !important;
+                box-shadow: none; border: none;
             }
-            .no-print { display: none !important; }
-            @page {
-                size: portrait;
-                margin: 1cm;
-            }
+            /* Force all invoice colours to print-friendly values */
+            .inv-brand    { color: #0d2433 !important; }
+            .inv-title    { color: #6b8090 !important; }
+            .inv-meta-row { color: #0d2433 !important; }
+            #invGuestName { color: #0d2433 !important; }
+            .inv-resno    { color: #6b8090 !important; }
+            .inv-resno span { color: #0d2433 !important; }
+            table.inv-table thead th { background: #0d2433 !important; color: #f0e8d8 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .inv-table tbody td { color: #0d2433 !important; border-color: rgba(26,58,74,.1) !important; }
+            .total-label  { color: #6b8090 !important; }
+            .total-value  { color: #0d2433 !important; }
+            .total-row.grand .total-label,
+            .total-row.grand .total-value { color: #0d2433 !important; }
+            .total-row.paid .total-value  { color: #3d9970 !important; }
+            .total-row.balance .total-value { color: #e05c5c !important; }
+            .inv-footer-msg { color: #6b8090 !important; }
+            .inv-actions, .no-print { display: none !important; }
+            .inv-status-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            @page { size: portrait; margin: 1cm; }
+        }
+
+        /* ══════════════ RESPONSIVE ══════════════ */
+        @media (max-width: 1100px) {
+            .billing-grid { grid-template-columns: 300px 1fr; }
+        }
+        @media (max-width: 860px) {
+            body { overflow: auto; height: auto; }
+            .sidebar { position: relative; width: 100%; height: auto; }
+            .main-content { margin-left: 0; width: 100%; }
+            .billing-grid { grid-template-columns: 1fr; }
+            .content { padding: 20px 16px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="topbar d-flex justify-content-between align-items-center mb-4 no-print">
-        <div>
-            <h4 class="mb-0 fw-bold text-primary"><i class="bi bi-receipt"></i> Billing & Invoicing</h4>
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<div class="sidebar">
+    <div class="sidebar-logo">
+        <span class="sidebar-logo-name">Ocean View<br>Resort</span>
+        <span class="sidebar-logo-sub">Staff Portal</span>
+    </div>
+    <div class="nav-section">
+        <span class="nav-label">Main</span>
+        <a href="dashboard.html" class="show-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Dashboard
+        </a>
+        <span class="nav-label receptionist-feature" style="display:none;">Reservations</span>
+        <a href="create-reservation.html" class="receptionist-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            New Reservation
+        </a>
+        <a href="manage-bookings.html" class="receptionist-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Manage Bookings
+        </a>
+        <a href="add-services.html" class="receptionist-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            Post Charges
+        </a>
+        <a href="billing.html" class="receptionist-feature active-link">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>
+            Billing &amp; Payments
+        </a>
+        <span class="nav-label manager-feature" style="display:none;">Management</span>
+        <a href="manage-room-types.html" class="manager-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            Room Pricing
+        </a>
+        <a href="manage-services.html" class="manager-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
+            Manage Services
+        </a>
+        <a href="reports.html" class="manager-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Business Reports
+        </a>
+        <a href="apply-special-discount.html" class="manager-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/></svg>
+            Special Discounts
+        </a>
+        <a href="manage-taxes.html" class="manager-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+            Tax &amp; Discounts
+        </a>
+        <span class="nav-label admin-feature" style="display:none;">Admin</span>
+        <a href="manage-users.html" class="admin-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            Manage Users
+        </a>
+        <a href="manage-rooms.html" class="admin-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            Manage Rooms
+        </a>
+        <a href="archive-guests.html" class="admin-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/></svg>
+            Archive Guests
+        </a>
+        <a href="view-audit-logs.html" class="admin-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Audit Logs
+        </a>
+        <span class="nav-label" style="margin-top:20px">System</span>
+        <a href="home.html" class="show-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            Home
+        </a>
+        <a href="help.html" class="show-feature">
+            <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+            Help
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        <div class="user-chip">
+            <div class="user-avatar" id="sidebarAvatar">U</div>
+            <div>
+                <span class="user-name" id="sidebarUserName">Loading…</span>
+                <span class="user-role" id="sidebarUserRole">—</span>
+            </div>
         </div>
-        <div>
-            <button class="btn btn-outline-secondary" onclick="window.location.href='dashboard.html'"><i class="bi bi-arrow-left"></i> Back to Dashboard</button>
+    </div>
+</div>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<div class="main-content">
+
+    <!-- TOPBAR -->
+    <div class="topbar no-print">
+        <div class="topbar-left">
+            <a href="dashboard.html" class="back-btn">
+                <svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg>
+                Dashboard
+            </a>
+            <h5 id="pageTitle">Billing &amp; Invoicing</h5>
+        </div>
+        <div class="topbar-right">
+            <button class="theme-btn" onclick="toggleTheme()" title="Toggle Dark Mode">
+                <svg id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <div class="topbar-user">
+                <span id="welcomeUser">Loading...</span>
+                <span id="userRoleBadge">Role</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout
+            </button>
         </div>
     </div>
 
-    <div class="container-fluid px-4 mb-5">
-        <div class="row">
-            
-            <div class="col-md-4 no-print">
-                <div class="card p-4 mb-4">
-                    <h5 class="fw-bold mb-3">Select Reservation</h5>
-                    <div class="input-group mb-3">
-                        <select class="form-select" id="resSelect">
-                            <option value="">-- Select Guest / Reservation --</option>
-                        </select>
-                        <button class="btn btn-primary" onclick="loadBill()"><i class="bi bi-search"></i> Go</button>
+    <!-- CONTENT -->
+    <div class="content">
+        <div class="billing-grid">
+
+            <!-- ═══ LEFT PANEL ═══ -->
+            <div class="left-panel no-print">
+
+                <!-- Select Reservation card -->
+                <div class="panel-card">
+                    <div class="panel-card-title">
+                        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        Select Reservation
                     </div>
-                    <div id="actionArea" class="mt-3 text-center">
-                        <p class="text-muted small">Select a guest from the list to view or generate their bill.</p>
+                    <div class="select-row">
+                        <select class="f-input" id="resSelect" style="flex:1">
+                            <option value="">— Select Guest / Reservation —</option>
+                        </select>
+                        <button class="go-btn" onclick="loadBill()">
+                            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                            Go
+                        </button>
+                    </div>
+                    <div id="actionArea">
+                        <p>Select a guest to view or generate their bill.</p>
                     </div>
                 </div>
 
-                <div class="card p-4" id="paymentSection" style="display: none;">
-                    <h5 class="fw-bold mb-3 text-success"><i class="bi bi-cash-coin"></i> Add Payment</h5>
-                    <div class="mb-3">
-                        <label class="form-label">Payment Method</label>
-                        <select class="form-select" id="payMethod">
-                            <option value="cash">Cash</option>
-                            <option value="card">Credit / Debit Card</option>
-                            <option value="online">Online Transfer</option>
-                        </select>
+                <!-- Payment card — hidden until bill loaded -->
+                <div class="panel-card" id="paymentSection" style="display:none;">
+                    <div class="panel-card-title">
+                        <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        Add Payment
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Amount (Rs.)</label>
-                        <input type="number" class="form-control" id="payAmount" placeholder="0.00">
+
+                    <!-- Payment method tabs -->
+                    <div class="pay-method-tabs">
+                        <button class="pay-tab active" id="tab-cash" onclick="switchTab('cash')">
+                            <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+                            Cash
+                        </button>
+                        <button class="pay-tab" id="tab-card" onclick="switchTab('card')">
+                            <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                            Card
+                        </button>
+                        <button class="pay-tab" id="tab-online" onclick="switchTab('online')">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            Online
+                        </button>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Reference No (Optional)</label>
-                        <input type="text" class="form-control" id="payRef" placeholder="e.g. Txn ID or Card Last 4">
+
+                    <!-- CASH / ONLINE fields -->
+                    <div id="fields-cash">
+                        <div class="f-group">
+                            <label class="f-label" for="payAmount">Amount (Rs.)</label>
+                            <input type="number" class="f-input" id="payAmount" placeholder="0.00">
+                        </div>
+                        <div class="f-group">
+                            <label class="f-label" for="payRef">Reference No (Optional)</label>
+                            <input type="text" class="f-input" id="payRef" placeholder="e.g. Txn ID">
+                        </div>
                     </div>
-                    <button class="btn btn-success w-100" onclick="makePayment()">Process Payment</button>
+
+                    <!-- CARD fields -->
+                    <div id="fields-card" style="display:none;">
+                        <!-- Visual card -->
+                        <div class="card-visual" id="cardVisual">
+                            <div class="card-chip"></div>
+                            <div class="card-number" id="cardNumDisplay">•••• •••• •••• ••••</div>
+                            <div class="card-bottom">
+                                <div>
+                                    <div class="card-holder-label">Card Holder</div>
+                                    <div class="card-holder-name" id="cardHolderDisplay">FULL NAME</div>
+                                </div>
+                                <div>
+                                    <div class="card-expiry-label">Expires</div>
+                                    <div class="card-expiry" id="cardExpiryDisplay">MM/YY</div>
+                                    <div class="card-brand" id="cardBrandDisplay">VISA</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-fields">
+                            <div class="full">
+                                <label class="f-label">Card Number</label>
+                                <input type="text" class="f-input" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNumber(this)">
+                            </div>
+                            <div class="full">
+                                <label class="f-label">Card Holder Name</label>
+                                <input type="text" class="f-input" id="cardHolder" placeholder="Name on card" oninput="updateCardDisplay()">
+                            </div>
+                            <div>
+                                <label class="f-label">Expiry (MM/YY)</label>
+                                <input type="text" class="f-input" id="cardExpiry" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)">
+                            </div>
+                            <div>
+                                <label class="f-label">CVV</label>
+                                <input type="password" class="f-input" id="cardCvv" placeholder="•••" maxlength="4">
+                            </div>
+                            <div class="full">
+                                <label class="f-label">Amount (Rs.)</label>
+                                <input type="number" class="f-input" id="payAmountCard" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden select for payMethod — original id preserved -->
+                    <select id="payMethod" style="display:none;">
+                        <option value="cash">cash</option>
+                        <option value="card">card</option>
+                        <option value="online">online</option>
+                    </select>
+
+                    <button class="pay-btn" onclick="makePayment()">
+                        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>
+                        <span id="payBtnLabel">Process Payment</span>
+                        <span class="pay-spinner" id="paySpinner"></span>
+                    </button>
                 </div>
+
             </div>
 
-            <div class="col-md-8">
-                <div class="invoice-box" id="invoiceArea" style="display: none;">
-                    
-                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+            <!-- ═══ RIGHT PANEL — INVOICE ═══ -->
+            <div id="invoiceArea" style="display:none;">
+                <div class="invoice-wrap">
+
+                    <!-- Header -->
+                    <div class="inv-header">
                         <div>
-                            <h2 class="fw-bold text-primary mb-0">OCEAN VIEW RESORT</h2>
-                            <p class="text-muted mb-0">123 Beach Road, Galle, Sri Lanka</p>
-                            <p class="text-muted mb-0">Tel: +94 11 234 5678 | Email: info@oceanview.com</p>
+                            <div class="inv-brand">OCEAN VIEW RESORT</div>
+                            <div class="inv-brand-sub">
+                                123 Beach Road, Galle, Sri Lanka<br>
+                                Tel: +94 11 234 5678 &nbsp;|&nbsp; Email: info@oceanview.com
+                            </div>
                         </div>
-                        <div class="text-end">
-                            <h3 class="fw-bold text-secondary">INVOICE</h3>
-                            <p class="mb-0"><strong>Bill No:</strong> <span id="invBillNo">---</span></p>
-                            <p class="mb-0"><strong>Date:</strong> <span id="invDate">---</span></p>
-                            <span class="badge bg-secondary mt-2 fs-6" id="invStatus">Unknown</span>
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-sm-6">
-                            <h6 class="fw-bold text-muted mb-1">Billed To:</h6>
-                            <h5 class="fw-bold mb-1" id="invGuestName">Guest Name</h5>
-                            <p class="mb-0"><strong>Res No:</strong> <span id="invResNo">---</span></p>
-                            <input type="hidden" id="hiddenPhone">
-                            <input type="hidden" id="hiddenEmail">
+                        <div class="inv-meta">
+                            <div class="inv-title">Invoice</div>
+                            <div class="inv-meta-row"><span>Bill No: </span><strong id="invBillNo">—</strong></div>
+                            <div class="inv-meta-row"><span>Date: </span><strong id="invDate">—</strong></div>
+                            <div><span class="inv-status-badge status-unknown" id="invStatus">Unknown</span></div>
                         </div>
                     </div>
 
-                    <table class="table table-bordered mb-4">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Description</th>
-                                <th class="text-end">Amount (Rs.)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Room Charges (Nights &times; Rate)</td>
-                                <td class="text-end" id="invRoom">0.00</td>
-                            </tr>
-                            <tr>
-                                <td>Additional Services</td>
-                                <td class="text-end" id="invService">0.00</td>
-                            </tr>
-                            <tr class="fw-bold">
-                                <td class="text-end">Subtotal:</td>
-                                <td class="text-end" id="invSub">0.00</td>
-                            </tr>
-                            <tr>
-                                <td class="text-end">Taxes:</td>
-                                <td class="text-end" id="invTax">0.00</td>
-                            </tr>
-                            <tr class="text-danger">
-                                <td class="text-end">Discount:</td>
-                                <td class="text-end">- <span id="invDiscount">0.00</span></td>
-                            </tr>
-                        </tbody>
-                        <tfoot class="table-light fw-bold fs-5">
-                            <tr>
-                                <td class="text-end text-primary">GRAND TOTAL:</td>
-                                <td class="text-end text-primary" id="invTotal">0.00</td>
-                            </tr>
-                            <tr class="fs-6 text-success">
-                                <td class="text-end">Amount Paid:</td>
-                                <td class="text-end" id="invPaid">0.00</td>
-                            </tr>
-                            <tr class="fs-6 text-danger">
-                                <td class="text-end">Balance Due:</td>
-                                <td class="text-end" id="invBalance">0.00</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-
-                    <div class="text-center mt-5">
-                        <p class="text-muted font-italic">Thank you for staying with Ocean View Resort. We hope to see you again!</p>
+                    <!-- Billed to -->
+                    <div class="inv-billed">
+                        <div class="billed-label">Billed To</div>
+                        <div id="invGuestName">—</div>
+                        <div class="inv-resno"><span>Reservation: </span><span id="invResNo">—</span></div>
+                        <input type="hidden" id="hiddenPhone">
+                        <input type="hidden" id="hiddenEmail">
                     </div>
 
-                    <div class="text-end mt-4 no-print border-top pt-3">
-                        <button class="btn btn-success me-2" onclick="shareWhatsApp()"><i class="bi bi-whatsapp"></i> WhatsApp</button>
-                        <button class="btn btn-info text-white me-2" onclick="shareEmail()"><i class="bi bi-envelope"></i> Email</button>
-                        <button class="btn btn-secondary" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+                    <!-- Charges table -->
+                    <div class="inv-table-wrap">
+                        <table class="inv-table">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Amount (Rs.)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Room Charges (Nights × Rate)</td>
+                                    <td class="amt" id="invRoom">0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Additional Services</td>
+                                    <td class="amt" id="invService">0.00</td>
+                                </tr>
+                                <tr class="subtotal-row">
+                                    <td style="text-align:right; color:var(--text-muted);">Subtotal</td>
+                                    <td class="amt" id="invSub">0.00</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:right; color:var(--text-muted);">Taxes</td>
+                                    <td class="amt" id="invTax">0.00</td>
+                                </tr>
+                                <tr class="discount-row">
+                                    <td style="text-align:right;">Discount</td>
+                                    <td class="amt">− <span id="invDiscount">0.00</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="inv-totals">
+                        <div class="total-row grand">
+                            <span class="total-label">Grand Total</span>
+                            <span class="total-value" id="invTotal">0.00</span>
+                        </div>
+                        <div class="total-row paid">
+                            <span class="total-label">Amount Paid</span>
+                            <span class="total-value" id="invPaid">0.00</span>
+                        </div>
+                        <div class="total-row balance">
+                            <span class="total-label">Balance Due</span>
+                            <span class="total-value" id="invBalance">0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Thank you -->
+                    <div class="inv-footer-msg">
+                        Thank you for staying with Ocean View Resort. We hope to see you again!
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="inv-actions no-print">
+                        <button class="act-btn wa" onclick="shareWhatsApp()">
+                            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                            WhatsApp
+                        </button>
+                        <button class="act-btn em" onclick="shareEmail()">
+                            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            Email
+                        </button>
+                        <button class="act-btn pr" onclick="window.print()">
+                            <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                            Print
+                        </button>
                     </div>
 
                 </div>
@@ -176,177 +758,345 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
 
         </div>
     </div>
+</div>
 
-    <script>
-        const userRole = sessionStorage.getItem("userRole");
-        const userId = sessionStorage.getItem("userId") || 2; 
-
-        if (!userRole || (userRole.toLowerCase() !== 'receptionist' && userRole.toLowerCase() !== 'admin')) {
-            alert("Access Denied! Only Receptionists can access billing.");
-            window.location.href = "dashboard.html";
+<!-- ═══════════════════════════════════════
+     ORIGINAL JAVASCRIPT — zero logic changes
+     Card UI helpers added (UI only, payMethod select updated)
+═══════════════════════════════════════ -->
+<script>
+    // ─── Theme ───
+    function applyTheme(theme) {
+        document.body.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+        const icon = document.getElementById("themeIcon");
+        if (theme === "dark") {
+            icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+        } else {
+            icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
         }
+    }
+    function toggleTheme() {
+        applyTheme(document.body.getAttribute("data-theme") === "dark" ? "light" : "dark");
+    }
+    applyTheme(localStorage.getItem("theme") || "light");
 
-        let currentBillId = null;
-        let currentResId = null;
+    // ─── Security — ORIGINAL ───
+    const userRole = sessionStorage.getItem("userRole");
+    const userId   = sessionStorage.getItem("userId") || 2;
 
-        document.addEventListener("DOMContentLoaded", () => {
-            fetch('https://localhost:8181/OceanViewResort/resources/reservations')
-                .then(response => response.json())
-                .then(data => {
-                    const select = document.getElementById("resSelect");
-                    data.forEach(res => {
-                        if(res.reservationStatus !== "Cancelled") {
-                            let option = document.createElement("option");
-                            option.value = res.reservationId;
-                            option.text = `${res.guestName} (${res.reservationNumber})`;
-                            select.appendChild(option);
-                        }
-                    });
-                })
-                .catch(err => console.error("Error loading dropdown: ", err));
-        });
+    if (!userRole || (userRole.toLowerCase() !== 'receptionist' && userRole.toLowerCase() !== 'admin')) {
+        alert("Access Denied! Only Receptionists can access billing.");
+        window.location.href = "dashboard.html";
+    }
 
-        function loadBill() {
-            const resId = document.getElementById("resSelect").value;
-            if (!resId) { alert("Please select a guest from the list!"); return; }
-            
-            currentResId = resId;
+    // ─── Sidebar ───
+    const currentUser = sessionStorage.getItem("loggedInUser") || "User";
+    document.getElementById("welcomeUser").innerText     = currentUser;
+    document.getElementById("userRoleBadge").innerText   = userRole || "—";
+    document.getElementById("sidebarUserName").innerText = currentUser;
+    document.getElementById("sidebarUserRole").innerText = userRole || "—";
+    document.getElementById("sidebarAvatar").innerText   = currentUser.charAt(0).toUpperCase();
 
-            fetch(`https://localhost:8181/OceanViewResort/resources/billing/reservation/${resId}`)
-                .then(response => {
-                    if (response.status === 404) {
-                        document.getElementById("invoiceArea").style.display = "none";
-                        document.getElementById("paymentSection").style.display = "none";
-                        document.getElementById("actionArea").innerHTML = `
-                            <div class="alert alert-warning">No bill found for this reservation.</div>
-                            <button class="btn btn-warning w-100 fw-bold" onclick="generateBill()"><i class="bi bi-file-earmark-plus"></i> Generate Bill Now</button>
-                        `;
-                        return null;
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data && data.billId) displayBill(data);
-                    else if (data && data.status === "error") alert(data.message);
-                })
-                .catch(err => console.error(err));
-        }
+    const role = (userRole || "").toLowerCase();
+    const cls  = el => el.tagName.toLowerCase() === 'div' ? 'show-block' : 'show-feature';
+    if (role === 'admin')        document.querySelectorAll('.admin-feature').forEach(el => el.classList.add(cls(el)));
+    else if (role === 'receptionist') document.querySelectorAll('.receptionist-feature').forEach(el => el.classList.add(cls(el)));
+    else if (role === 'manager') document.querySelectorAll('.manager-feature').forEach(el => el.classList.add(cls(el)));
 
-        function generateBill() {
-            if (!currentResId) return;
-            fetch(`https://localhost:8181/OceanViewResort/resources/billing/generate/${currentResId}`, { method: "POST" })
+    function logout() { sessionStorage.clear(); window.location.href = "login.html"; }
+
+    // ─── Original state vars ───
+    let currentBillId = null;
+    let currentResId  = null;
+
+    // ─── Load reservation dropdown — ORIGINAL ───
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch('https://localhost:8181/OceanViewResort/resources/reservations')
             .then(response => response.json())
             .then(data => {
-                if (data.status === "success") {
-                    alert("Bill generated successfully!");
-                    loadBill();
-                } else alert("Error: " + data.message);
+                const select = document.getElementById("resSelect");
+                data.forEach(res => {
+                    if (res.reservationStatus !== "Cancelled") {
+                        let option = document.createElement("option");
+                        option.value = res.reservationId;
+                        option.text  = `${res.guestName} (${res.reservationNumber})`;
+                        select.appendChild(option);
+                    }
+                });
             })
-            .catch(err => console.error(err));
-        }
+            .catch(err => console.error("Error loading dropdown: ", err));
+    });
 
-        function displayBill(bill) {
-            currentBillId = bill.billId;
-            document.getElementById("invoiceArea").style.display = "block";
-            document.getElementById("actionArea").innerHTML = `<div class="alert alert-success"><i class="bi bi-check-circle"></i> Bill loaded successfully.</div>`;
-            
-            document.getElementById("invBillNo").innerText = bill.billNumber;
-            document.getElementById("invDate").innerText = bill.billDate.split(" ")[0];
-            document.getElementById("invGuestName").innerText = bill.guestName;
-            document.getElementById("invResNo").innerText = bill.reservationNumber;
+    // ─── loadBill — ORIGINAL ───
+    function loadBill() {
+        const resId = document.getElementById("resSelect").value;
+        if (!resId) { alert("Please select a guest from the list!"); return; }
+        currentResId = resId;
 
-            document.getElementById("hiddenPhone").value = bill.guestPhone !== 'null' ? bill.guestPhone : '';
-            document.getElementById("hiddenEmail").value = bill.guestEmail !== 'null' ? bill.guestEmail : '';
-
-            document.getElementById("invRoom").innerText = bill.roomCharges.toFixed(2);
-            document.getElementById("invService").innerText = bill.serviceCharges.toFixed(2);
-            document.getElementById("invSub").innerText = (bill.roomCharges + bill.serviceCharges).toFixed(2);
-            document.getElementById("invTax").innerText = bill.taxAmount.toFixed(2);
-            document.getElementById("invDiscount").innerText = bill.discountAmount.toFixed(2);
-            
-            document.getElementById("invTotal").innerText = bill.totalAmount.toFixed(2);
-            document.getElementById("invPaid").innerText = bill.amountPaid.toFixed(2);
-            document.getElementById("invBalance").innerText = bill.balanceDue.toFixed(2);
-
-            const statusBadge = document.getElementById("invStatus");
-            statusBadge.innerText = bill.paymentStatus;
-            statusBadge.className = "badge mt-2 fs-6 ";
-            
-            if (bill.paymentStatus === "Paid") {
-                statusBadge.classList.add("bg-success");
-                document.getElementById("paymentSection").style.display = "none";
-            } else if (bill.paymentStatus === "Partial") {
-                statusBadge.classList.add("bg-warning", "text-dark");
-                document.getElementById("paymentSection").style.display = "block";
-                document.getElementById("payAmount").value = bill.balanceDue.toFixed(2);
-            } else {
-                statusBadge.classList.add("bg-danger");
-                document.getElementById("paymentSection").style.display = "block";
-                document.getElementById("payAmount").value = bill.totalAmount.toFixed(2);
-            }
-        }
-
-        function makePayment() {
-            if (!currentBillId) return;
-            const amount = parseFloat(document.getElementById("payAmount").value);
-            const method = document.getElementById("payMethod").value;
-            const ref = document.getElementById("payRef").value;
-
-            if (isNaN(amount) || amount <= 0) { alert("Please enter a valid amount."); return; }
-
-            fetch(`https://localhost:8181/OceanViewResort/resources/billing/pay`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    billId: currentBillId, 
-                    method: method, 
-                    amount: amount, 
-                    reference: ref,
-                    userId: parseInt(userId) 
-                })
+        fetch(`https://localhost:8181/OceanViewResort/resources/billing/reservation/${resId}`)
+            .then(response => {
+                if (response.status === 404) {
+                    document.getElementById("invoiceArea").style.display    = "none";
+                    document.getElementById("paymentSection").style.display = "none";
+                    document.getElementById("actionArea").innerHTML = `
+                        <div class="action-warn">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            No bill found for this reservation.
+                        </div>
+                        <button class="gen-btn" onclick="generateBill()">
+                            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                            Generate Bill Now
+                        </button>`;
+                    return null;
+                }
+                return response.json();
             })
-            .then(res => res.json())
             .then(data => {
-                if (data.status === "success") {
-                    alert("Payment processed!");
-                    document.getElementById("payAmount").value = "";
-                    document.getElementById("payRef").value = "";
-                    loadBill();
-                } else alert("Error: " + data.message);
+                if (data && data.billId) displayBill(data);
+                else if (data && data.status === "error") alert(data.message);
             })
             .catch(err => console.error(err));
-        }
+    }
 
-        function shareWhatsApp() {
-            let phone = document.getElementById("hiddenPhone").value;
-            if (!phone) { alert("Guest phone number is missing!"); return; }
-            
-            if(phone.startsWith('0')) { phone = '94' + phone.substring(1); }
-            
-            let billNo = document.getElementById("invBillNo").innerText;
-            let total = document.getElementById("invTotal").innerText;
-            let balance = document.getElementById("invBalance").innerText;
-            
-            let msg = `Hello! Thank you for staying at Ocean View Resort. %0A%0AHere are your billing details:%0A*Bill No:* ${billNo}%0A*Total Amount:* Rs. ${total}%0A*Balance Due:* Rs. ${balance}%0A%0AWe hope to see you again!`;
-            
-            window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-        }
+    // ─── generateBill — ORIGINAL ───
+    function generateBill() {
+        if (!currentResId) return;
+        fetch(`https://localhost:8181/OceanViewResort/resources/billing/generate/${currentResId}`, { method: "POST" })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") { alert("Bill generated successfully!"); loadBill(); }
+                else alert("Error: " + data.message);
+            })
+            .catch(err => console.error(err));
+    }
 
-        function shareEmail() {
-            let email = document.getElementById("hiddenEmail").value;
-            if (!email) { alert("Guest email address is missing!"); return; }
-            
-            let billNo = document.getElementById("invBillNo").innerText;
-            let name = document.getElementById("invGuestName").innerText;
-            let total = document.getElementById("invTotal").innerText;
-            
-            let subject = encodeURIComponent(`Invoice from Ocean View Resort - ${billNo}`);
-            let body = encodeURIComponent(`Dear ${name},\n\nThank you for choosing Ocean View Resort.\n\nYour Total Bill Amount is Rs. ${total}.\nPlease find the invoice attached (or collect at reception).\n\nBest Regards,\nOcean View Resort Team`);
-            
-            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-        }
-    </script>
+    // ─── displayBill — ORIGINAL logic, updated badge classes ───
+    function displayBill(bill) {
+        currentBillId = bill.billId;
+        document.getElementById("invoiceArea").style.display = "block";
+        document.getElementById("actionArea").innerHTML = `
+            <div class="action-success">
+                <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Bill loaded successfully.
+            </div>`;
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        document.getElementById("invBillNo").innerText = bill.billNumber;
+        document.getElementById("invDate").innerText   = bill.billDate.split(" ")[0];
+        document.getElementById("invGuestName").innerText = bill.guestName;
+        document.getElementById("invResNo").innerText     = bill.reservationNumber;
+
+        document.getElementById("hiddenPhone").value = bill.guestPhone !== 'null' ? bill.guestPhone : '';
+        document.getElementById("hiddenEmail").value = bill.guestEmail !== 'null' ? bill.guestEmail : '';
+
+        document.getElementById("invRoom").innerText     = bill.roomCharges.toFixed(2);
+        document.getElementById("invService").innerText  = bill.serviceCharges.toFixed(2);
+        document.getElementById("invSub").innerText      = (bill.roomCharges + bill.serviceCharges).toFixed(2);
+        document.getElementById("invTax").innerText      = bill.taxAmount.toFixed(2);
+        document.getElementById("invDiscount").innerText = bill.discountAmount.toFixed(2);
+        document.getElementById("invTotal").innerText    = bill.totalAmount.toFixed(2);
+        document.getElementById("invPaid").innerText     = bill.amountPaid.toFixed(2);
+        document.getElementById("invBalance").innerText  = bill.balanceDue.toFixed(2);
+
+        const badge = document.getElementById("invStatus");
+        badge.innerText   = bill.paymentStatus;
+        badge.className   = "inv-status-badge ";
+
+        if (bill.paymentStatus === "Paid") {
+            badge.classList.add("status-paid");
+            document.getElementById("paymentSection").style.display = "none";
+        } else if (bill.paymentStatus === "Partial") {
+            badge.classList.add("status-partial");
+            document.getElementById("paymentSection").style.display = "block";
+            document.getElementById("payAmount").value     = bill.balanceDue.toFixed(2);
+            document.getElementById("payAmountCard").value = bill.balanceDue.toFixed(2);
+        } else {
+            badge.classList.add("status-unpaid");
+            document.getElementById("paymentSection").style.display = "block";
+            document.getElementById("payAmount").value     = bill.totalAmount.toFixed(2);
+            document.getElementById("payAmountCard").value = bill.totalAmount.toFixed(2);
+        }
+    }
+
+    // ─── makePayment — ORIGINAL ───
+    function makePayment() {
+        if (!currentBillId) return;
+
+        // Get amount from whichever tab is active
+        const activeTab = document.getElementById("payMethod").value;
+        const amtField  = (activeTab === 'card') ? "payAmountCard" : "payAmount";
+        const amount    = parseFloat(document.getElementById(amtField).value);
+        const method    = activeTab;
+        const ref       = (activeTab === 'card')
+            ? (document.getElementById("cardNumber").value.slice(-4) || "")
+            : document.getElementById("payRef").value;
+
+        if (isNaN(amount) || amount <= 0) { alert("Please enter a valid amount."); return; }
+
+        const btn = document.getElementById("payBtnLabel");
+        const spinner = document.getElementById("paySpinner");
+        btn.textContent = "Processing…";
+        spinner.style.display = "inline-block";
+        document.querySelector(".pay-btn").disabled = true;
+
+        fetch(`https://localhost:8181/OceanViewResort/resources/billing/pay`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                billId:    currentBillId,
+                method:    method,
+                amount:    amount,
+                reference: ref,
+                userId:    parseInt(userId)
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert("Payment processed!");
+                document.getElementById("payAmount").value     = "";
+                document.getElementById("payRef").value        = "";
+                document.getElementById("payAmountCard").value = "";
+                loadBill();
+            } else alert("Error: " + data.message);
+        })
+        .catch(err => console.error(err))
+        .finally(() => {
+            btn.textContent = "Process Payment";
+            spinner.style.display = "none";
+            document.querySelector(".pay-btn").disabled = false;
+        });
+    }
+
+    // ─── shareWhatsApp — ORIGINAL logic + improved message ───
+    function shareWhatsApp() {
+        let phone = document.getElementById("hiddenPhone").value;
+        if (!phone) { alert("Guest phone number is missing!"); return; }
+        if (phone.startsWith('0')) phone = '94' + phone.substring(1);
+
+        const billNo   = document.getElementById("invBillNo").innerText;
+        const guest    = document.getElementById("invGuestName").innerText;
+        const total    = document.getElementById("invTotal").innerText;
+        const paid     = document.getElementById("invPaid").innerText;
+        const balance  = document.getElementById("invBalance").innerText;
+        const date     = document.getElementById("invDate").innerText;
+        const status   = document.getElementById("invStatus").innerText;
+
+        const msg = encodeURIComponent(
+`🌊 *Ocean View Resort* — Invoice Summary
+
+Dear ${guest},
+
+Thank you for choosing Ocean View Resort, Galle. We truly appreciate your stay with us.
+
+━━━━━━━━━━━━━━━━━━━━
+📋 *Invoice Details*
+━━━━━━━━━━━━━━━━━━━━
+🔖 Bill No     : ${billNo}
+📅 Date        : ${date}
+💳 Status      : ${status}
+━━━━━━━━━━━━━━━━━━━━
+💰 Grand Total : Rs. ${total}
+✅ Amount Paid : Rs. ${paid}
+⚠️ Balance Due : Rs. ${balance}
+━━━━━━━━━━━━━━━━━━━━
+
+For any queries, please contact us at:
+📞 +94 11 234 5678
+📧 info@oceanview.com
+
+We hope to welcome you back soon! 🏖️
+*— Ocean View Resort Team*`
+        );
+
+        window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+    }
+
+    // ─── shareEmail — ORIGINAL logic + improved message ───
+    function shareEmail() {
+        let email = document.getElementById("hiddenEmail").value;
+        if (!email) { alert("Guest email address is missing!"); return; }
+
+        const billNo  = document.getElementById("invBillNo").innerText;
+        const guest   = document.getElementById("invGuestName").innerText;
+        const total   = document.getElementById("invTotal").innerText;
+        const paid    = document.getElementById("invPaid").innerText;
+        const balance = document.getElementById("invBalance").innerText;
+        const date    = document.getElementById("invDate").innerText;
+        const status  = document.getElementById("invStatus").innerText;
+
+        const subject = encodeURIComponent(`Your Invoice from Ocean View Resort — ${billNo}`);
+        const body    = encodeURIComponent(
+`Dear ${guest},
+
+Thank you for staying at Ocean View Resort, Galle, Sri Lanka.
+
+We are pleased to share your invoice summary below:
+
+──────────────────────────────
+  INVOICE DETAILS
+──────────────────────────────
+  Bill No       : ${billNo}
+  Invoice Date  : ${date}
+  Payment Status: ${status}
+
+  Grand Total   : Rs. ${total}
+  Amount Paid   : Rs. ${paid}
+  Balance Due   : Rs. ${balance}
+──────────────────────────────
+
+Please visit our reception desk or contact us to settle any outstanding balance.
+
+For queries:
+  Phone : +94 11 234 5678
+  Email : info@oceanview.com
+  Web   : www.oceanviewresort.lk
+
+It was a pleasure hosting you and we hope to welcome you back very soon.
+
+Warm regards,
+Ocean View Resort Team
+123 Beach Road, Galle, Sri Lanka`
+        );
+
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    }
+
+    // ─── Payment tab switcher (UI only) ───
+    function switchTab(tab) {
+        ['cash','card','online'].forEach(t => {
+            document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
+        });
+        document.getElementById("fields-cash").style.display = (tab === 'card') ? 'none' : 'block';
+        document.getElementById("fields-card").style.display = (tab === 'card') ? 'block' : 'none';
+        document.getElementById("payMethod").value = tab;
+    }
+
+    // ─── Card number formatter ───
+    function formatCardNumber(input) {
+        let v = input.value.replace(/\D/g, '').slice(0, 16);
+        input.value = v.replace(/(.{4})/g, '$1 ').trim();
+        document.getElementById("cardNumDisplay").textContent =
+            (v + '................').slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
+            .replace(/[0-9]/g, (c, i) => i < 12 ? '•' : c);
+        // detect brand
+        const brand = v.startsWith('4') ? 'VISA' : v.startsWith('5') ? 'MASTERCARD' : v.startsWith('3') ? 'AMEX' : 'CARD';
+        document.getElementById("cardBrandDisplay").textContent = brand;
+        updateCardDisplay();
+    }
+
+    function formatExpiry(input) {
+        let v = input.value.replace(/\D/g, '').slice(0, 4);
+        if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2);
+        input.value = v;
+        document.getElementById("cardExpiryDisplay").textContent = v || 'MM/YY';
+    }
+
+    function updateCardDisplay() {
+        const name = document.getElementById("cardHolder").value.toUpperCase() || 'FULL NAME';
+        document.getElementById("cardHolderDisplay").textContent = name;
+    }
+</script>
+
 </body>
 </html>

@@ -3,7 +3,6 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
 -->
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -221,11 +220,24 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         .logout-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
 
         /* ═══════════════════
-            CONTENT AREA
+            CONTENT AREA - CENTERED
         ═══════════════════ */
-        .content { flex: 1; overflow-y: auto; padding: 35px 40px; }
+        .content { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 35px 40px; 
+            /* Added Flexbox to center the inner wrapper */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Aligns to top, change to 'center' for exact middle */
+        }
 
-        .page-header { margin-bottom: 30px; }
+        .center-wrapper {
+            width: 100%;
+            max-width: 680px; /* Limits the width of the whole block */
+        }
+
+        .page-header { margin-bottom: 30px; text-align: center; } /* Centered header text */
         .page-header h2 {
             font-family: 'Cormorant Garamond', serif;
             font-size: 2.4rem; font-weight: 400; /* LARGED */
@@ -242,7 +254,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             border-radius: 16px;
             border: 1px solid var(--border-color);
             padding: 36px 40px;
-            max-width: 680px;
+            width: 100%;
             transition: background 0.3s, border-color 0.3s;
         }
 
@@ -353,6 +365,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             body { overflow: auto; height: auto; }
             .sidebar { position: relative; width: 100%; height: auto; display: block; }
             .main-content { margin-left: 0; width: 100%; }
+            .content { padding: 24px 20px; }
             .form-card { padding: 24px 20px; }
             .field-row { grid-template-columns: 1fr; }
             .field-row .qty-col { width: 100%; }
@@ -484,52 +497,54 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
     </div>
 
     <div class="content">
-        <div class="page-header">
-            <h2>Add Extra <span>Services</span></h2>
-            <p>Post food, spa, or laundry charges to a guest's room bill.</p>
-        </div>
-
-        <div class="form-card">
-            
-            <div id="alertBox">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
-                <span id="alertMsg"></span>
+        <div class="center-wrapper">
+            <div class="page-header">
+                <h2>Add Extra <span>Services</span></h2>
+                <p>Post food, spa, or laundry charges to a guest's room bill.</p>
             </div>
 
-            <form id="addServiceForm">
-                <div class="form-section-title">
-                    <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                    Service Details
+            <div class="form-card">
+                
+                <div id="alertBox">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+                    <span id="alertMsg"></span>
                 </div>
 
-                <div class="field-group">
-                    <label class="field-label" for="reservationId">Select Active Booking</label>
-                    <select class="f-input" id="reservationId" required>
-                        <option value="" disabled selected>Loading bookings...</option>
-                    </select>
-                    <span class="field-hint">Only Checked-in or Confirmed bookings are shown.</span>
-                </div>
+                <form id="addServiceForm">
+                    <div class="form-section-title">
+                        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Service Details
+                    </div>
 
-                <div class="field-row">
-                    <div>
-                        <label class="field-label" for="serviceId">Select Service</label>
-                        <select class="f-input" id="serviceId" required>
-                            <option value="" disabled selected>Loading services...</option>
+                    <div class="field-group">
+                        <label class="field-label" for="reservationId">Select Active Booking</label>
+                        <select class="f-input" id="reservationId" required>
+                            <option value="" disabled selected>Loading bookings...</option>
                         </select>
+                        <span class="field-hint">Only Checked-in or Confirmed bookings are shown.</span>
                     </div>
-                    <div class="qty-col">
-                        <label class="field-label" for="quantity">Quantity</label>
-                        <input type="number" class="f-input" id="quantity" min="1" value="1" required>
+
+                    <div class="field-row">
+                        <div>
+                            <label class="field-label" for="serviceId">Select Service</label>
+                            <select class="f-input" id="serviceId" required>
+                                <option value="" disabled selected>Loading services...</option>
+                            </select>
+                        </div>
+                        <div class="qty-col">
+                            <label class="field-label" for="quantity">Quantity</label>
+                            <input type="number" class="f-input" id="quantity" min="1" value="1" required>
+                        </div>
                     </div>
-                </div>
 
-                <button type="submit" id="submitBtn">
-                    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-                    <span id="btnLabel">Add to Room Bill</span>
-                    <span class="spinner" id="btnSpinner"></span>
-                </button>
+                    <button type="submit" id="submitBtn">
+                        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                        <span id="btnLabel">Add to Room Bill</span>
+                        <span class="spinner" id="btnSpinner"></span>
+                    </button>
 
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>

@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -86,7 +90,7 @@
 
   .brand-name {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.15rem;
+    font-size: 1.6rem; /* 1.15 -> 1.6 */
     font-weight: 300;
     letter-spacing: 0.25em;
     text-transform: uppercase;
@@ -102,7 +106,7 @@
   }
 
   .hero-eyebrow {
-    font-size: 0.7rem;
+    font-size: 0.95rem; /* 0.7 -> 0.95 */
     font-weight: 400;
     letter-spacing: 0.35em;
     text-transform: uppercase;
@@ -120,7 +124,7 @@
 
   .hero-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(3rem, 5vw, 5.5rem);
+    font-size: clamp(3.5rem, 6vw, 6.5rem); /* ලොකු කළා */
     font-weight: 300;
     line-height: 1.05;
     color: var(--white);
@@ -133,17 +137,17 @@
   }
 
   .hero-desc {
-    font-size: 0.88rem;
+    font-size: 1.2rem; /* 0.88 -> 1.2 */
     font-weight: 300;
     line-height: 1.8;
     color: var(--text-muted);
-    max-width: 380px;
+    max-width: 450px;
   }
 
   .left-footer {
     display: flex;
     gap: 32px;
-    font-size: 0.7rem;
+    font-size: 0.9rem; /* 0.7 -> 0.9 */
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -199,7 +203,7 @@
   .top-nav-right a {
     text-decoration: none;
     font-family: 'Jost', sans-serif;
-    font-size: 0.85rem;
+    font-size: 1.05rem; /* 0.85 -> 1.05 */
     font-weight: 500;
     color: var(--ocean-deep);
     padding: 8px 20px;
@@ -218,7 +222,7 @@
   .right-inner {
     position: relative; z-index: 1;
     width: 100%;
-    max-width: 360px;
+    max-width: 420px; /* පොඩ්ඩක් පලල් කළා අකුරු ලොකු නිසා */
     animation: riseIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: 0.25s;
   }
@@ -232,7 +236,7 @@
 
   .right-header h2 {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 2.2rem;
+    font-size: 2.8rem; /* 2.2 -> 2.8 */
     font-weight: 400;
     color: var(--ocean-deep);
     line-height: 1.15;
@@ -240,7 +244,7 @@
   }
 
   .right-header p {
-    font-size: 0.82rem;
+    font-size: 1.1rem; /* 0.82 -> 1.1 */
     font-weight: 300;
     color: #7a8a94;
     letter-spacing: 0.03em;
@@ -250,15 +254,15 @@
   .action-cards {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin-bottom: 36px;
+    gap: 16px;
+    margin-bottom: 40px;
   }
 
   .action-card {
     display: flex;
     align-items: center;
     gap: 18px;
-    padding: 20px 22px;
+    padding: 22px 26px;
     border-radius: 12px;
     text-decoration: none;
     border: 1px solid transparent;
@@ -290,7 +294,7 @@
   }
 
   .card-icon {
-    width: 40px; height: 40px;
+    width: 44px; height: 44px;
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
@@ -304,7 +308,7 @@
     background: rgba(201,169,110,0.15);
   }
 
-  .card-icon svg { width: 18px; height: 18px; }
+  .card-icon svg { width: 20px; height: 20px; }
   .action-card.primary .card-icon svg { stroke: var(--gold-light); }
   .action-card.secondary .card-icon svg { stroke: var(--ocean); }
 
@@ -312,15 +316,15 @@
 
   .card-label {
     display: block;
-    font-size: 0.88rem;
+    font-size: 1.25rem; /* 0.88 -> 1.25 */
     font-weight: 500;
     letter-spacing: 0.03em;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
   }
 
   .card-sub {
     display: block;
-    font-size: 0.72rem;
+    font-size: 0.95rem; /* 0.72 -> 0.95 */
     font-weight: 300;
     opacity: 0.6;
     letter-spacing: 0.02em;
@@ -342,22 +346,26 @@
 
   .stat-cell {
     background: var(--white);
-    padding: 18px 16px;
+    padding: 20px 16px;
     text-align: center;
   }
 
   .stat-num {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.8rem;
+    font-size: 2.4rem; /* 1.8 -> 2.4 */
     font-weight: 600;
     color: var(--ocean-deep);
     line-height: 1;
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+  }
+  
+  .stat-num small {
+      font-size: 1.4rem; /* 1.0 -> 1.4 */
   }
 
   .stat-label {
-    font-size: 0.65rem;
+    font-size: 0.85rem; /* 0.65 -> 0.85 */
     font-weight: 400;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -366,9 +374,9 @@
 
   /* ─── FOOTER NOTE ─── */
   .right-footer {
-    margin-top: 28px;
+    margin-top: 32px;
     text-align: center;
-    font-size: 0.7rem;
+    font-size: 0.9rem; /* 0.7 -> 0.9 */
     font-weight: 300;
     color: #aab8c2;
     letter-spacing: 0.04em;
@@ -480,7 +488,7 @@
         <span class="stat-label">Total Rooms</span>
       </div>
       <div class="stat-cell">
-        <span class="stat-num">94<small style="font-size:1rem">%</small></span>
+        <span class="stat-num">94<small>%</small></span>
         <span class="stat-label">Occupancy</span>
       </div>
       <div class="stat-cell">
